@@ -1,0 +1,49 @@
+{
+"createUser":{
+    "email":"adetifaboluwatife@gmail.com",
+    "password":"hashedPassword",
+    "confirmPassword":"hashedPassword",
+    "firstname": "firstname",
+    "lastname": "lastname",
+    "phone": "phone",
+    "zxz": "YFTrHszH2Mtq7LQKHtFV"
+},
+
+"signin":{
+    "email": "test@gmail.com",
+    "password":"password"
+},
+
+"addProduct":{
+    "name": "test",
+    "price": 12,
+     "quantity": 10,
+     "description": "test",
+     "colors": "test, test, test",
+     "sizes": "test",
+     "categories": "test",
+     "details": "test",
+     "type": "test",
+     "image1": "test",
+     "image2": "test",
+     "image3": "test"
+},
+
+"addOrder":{
+    "userId":"1",
+    "orderItems":"[test, test]",
+    "firstname": "test",
+    "lastname":"test",
+    "email":"test@gmail.com",
+    "city":"test",
+    "state":"test",
+    "zip":"test",
+    "shippingAddress":"test",
+    "paymentMethod":"test",
+    "itemsPrice":"test",
+    "shippingPrice":"test",
+    "totalPrice":"test"
+
+}
+
+}
