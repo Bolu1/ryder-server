@@ -123,6 +123,6 @@ export class CreatedResponse<T> extends ApiResponse {
 
 export class ConflictResponse<T> extends ApiResponse{
 	constructor(message: string){
-		super(true, ResponseStatus.CONFLICT, message);
+		super(false, ResponseStatus.CONFLICT, message);
 	}
 }

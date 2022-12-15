@@ -43,7 +43,6 @@ class UserService {
     }
     const sql = `INSERT INTO users SET ?`;
     const response = await adb.query(sql, payload);
-
     // send otp verification
     // sendOtpVerificationEmail(email, phone);
     sendOtpVerificationSms(phone);

@@ -117,6 +117,6 @@ export class NoDataError extends ApiError {
 
 export class ConflictError extends ApiError{
 	constructor(message = 'Conflict') {
-		super(ErrorType.CONFLICT)
+		super(ErrorType.CONFLICT, message)
 	}
 }

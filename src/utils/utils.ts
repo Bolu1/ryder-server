@@ -11,8 +11,8 @@ const sendSms = (message)=>{
     client.messages
     .create({
        body: message,
-       from: '+13867031553',
-       to: '+2348105551713'
+       from: '+19853362244',
+       to: '+2347030540362'
      })
     .then(message => console.log(message.sid))
     }catch(error){
