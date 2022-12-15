@@ -28,7 +28,7 @@ class UserService {
       nationality: nationality,
       phone: phone,
       first_name: firstName,
-      last_naame: lastName,
+      last_name: lastName,
       slug: slug,
       photo: "/static/profile/default.png",
     };
