@@ -60,7 +60,7 @@ class UserService {
     const response = await adb.query(sql, payload);
     // send otp verification
     // sendOtpVerificationEmail(email, phone);
-    sendOtpVerificationSms(phone);
+    // sendOtpVerificationSms(phone);
 
     return;
   }
@@ -163,14 +163,14 @@ class UserService {
     const { phone, email } = body;
     const sql1 = `DELETE FROM otps WHERE phone = ${phone}`;
     await adb.query(sql1);
-    sendOtpVerificationEmail(email, phone);
+    // sendOtpVerificationEmail(email, phone);
   }
 
   public static async resendSmsOTP(body) {
     const { phone, email } = body;
     const sql1 = `DELETE FROM otps WHERE phone = ${phone}`;
     await adb.query(sql1);
-    sendOtpVerificationSms(phone);
+    // sendOtpVerificationSms(phone);
   }
 
   public static async getUserByEmail(email) {
@@ -252,7 +252,8 @@ class UserService {
     if (!result) {
       return "Sms has been sent";
     }
-    sendOtpForgotSms(result.first_name, req.body.phone);
+
+    // sendOtpForgotSms(result.email, result.first_name, req.body.phone);
     return "Sms has been sent";
   }
 
@@ -327,7 +328,7 @@ class UserService {
 
     const sql = `UPDATE users SET email = '${body.email}' WHERE phone = '${body.phone}'`;
     await adb.query(sql);
-    sendOtpVerificationEmail(body.email, body.phone);
+    // sendOtpVerificationEmail(body.email, body.phone);
     return;
   }
 

@@ -54,7 +54,7 @@ const sendOtpVerificationSms = async (phone) => {
   }
 };
 
-const sendOtpForgotSms = async (firstName, phone) => {
+const sendOtpForgotSms = async (email, firstName, phone) => {
   try {
     const otp = `${Math.floor(1000 + Math.random() * 9000)}`;
     const message = `Dear ${firstName}, your password reset authentication code is ${otp}. OTP valid for 15 minutes`;
@@ -72,7 +72,12 @@ const sendOtpForgotSms = async (firstName, phone) => {
     await adb.query(sql, payload);
 
     console.log(otp)
-    // sendSms(message);
+    sendSms(message);
+    await sendEmail({
+      email: email,
+      subject: "Email Verification",
+      message: message,
+    });
   } catch (error) {
     console.log(error);
   }
