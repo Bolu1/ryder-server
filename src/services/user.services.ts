@@ -1,10 +1,14 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const transporter = require("../utils/mailer");
-const {sendSms} = require("../utils/utils");
+const { sendSms } = require("../utils/utils");
 import { generateString } from "../helpers/constants";
 import randomString from "../utils/randomString";
-import { sendOtpVerificationEmail, sendOtpVerificationSms, sendOtpForgotSms } from "../helpers/otpVerification";
+import {
+  sendOtpVerificationEmail,
+  sendOtpVerificationSms,
+  sendOtpForgotSms,
+} from "../helpers/otpVerification";
 const fs = require("fs");
 const ndb = require("../config/connect");
 import {
@@ -18,7 +22,7 @@ const adb = ndb.promise();
 
 class UserService {
   public static async addUser(body) {
-    const { gender, nationality,   phone, firstName, lastName } = body;
+    const { gender, nationality, phone, firstName, lastName } = body;
     //payload to the database
     const slug = generateString(4, true, false);
     // const hashedPassword = await bcrypt.hash(password, 12);
@@ -36,10 +40,21 @@ class UserService {
     // check if user exists
     const result = await this.getUserByPhone(phone);
     if (result) {
-      if(result.status == 0){
-        throw new BadRequestError('Please verify your OTP')
+      if (result.status == 0) {
+        const sql = `DELETE FROM otps WHERE phone = ${phone}`;
+        await adb.query(sql);
+
+        const sql1 = `DELETE FROM phone WHERE phone = ${phone}`;
+        await adb.query(sql1);
       }
-      throw new ConflictError('Phone number already in use');
+      if (result.status == 1) {
+        throw new BadRequestError("Incomplete registration, enter email");
+      }
+      if (result.status == 2) {
+        throw new BadRequestError("Incomplete registration, enter password");
+      } else {
+        throw new ConflictError("Phone number already in use");
+      }
     }
     const sql = `INSERT INTO users SET ?`;
     const response = await adb.query(sql, payload);
@@ -61,25 +76,23 @@ class UserService {
       throw new BadRequestError("Invalid OTP");
     }
 
-    const {expires_at} = UserOTPVerificationRecords[0][0]
-    const hashedOTP = UserOTPVerificationRecords[0][0].otp
+    const { expires_at } = UserOTPVerificationRecords[0][0];
+    const hashedOTP = UserOTPVerificationRecords[0][0].otp;
 
-    if(expires_at < Date.now()){
-
-      const sql = `DELETE FROM otps WHERE phone = ${phone}`
-      await adb.query(sql)
-      throw new BadRequestError("OTP has expired, please request again")
+    if (expires_at < Date.now()) {
+      const sql = `DELETE FROM otps WHERE phone = ${phone}`;
+      await adb.query(sql);
+      throw new BadRequestError("OTP has expired, please request again");
     }
 
-    const validateOTP = await bcrypt.compare(otp, hashedOTP)
-    if(!validateOTP){
-      throw new BadRequestError("Invalid OTP")
+    const validateOTP = await bcrypt.compare(otp, hashedOTP);
+    if (!validateOTP) {
+      throw new BadRequestError("Invalid OTP");
     }
     await adb.query(`UPDATE users SET status = 3 WHERE phone = '${phone}'`);
-    const sql1 = `DELETE FROM otps WHERE phone = ${phone}`
-    await adb.query(sql1)
-    return 
-
+    const sql1 = `DELETE FROM otps WHERE phone = ${phone}`;
+    await adb.query(sql1);
+    return;
   }
 
   public static async verifyAuthSmsOTP(body) {
@@ -93,25 +106,23 @@ class UserService {
       throw new BadRequestError("Invalid OTP");
     }
 
-    const {expires_at} = UserOTPVerificationRecords[0][0]
-    const hashedOTP = UserOTPVerificationRecords[0][0].otp
+    const { expires_at } = UserOTPVerificationRecords[0][0];
+    const hashedOTP = UserOTPVerificationRecords[0][0].otp;
 
-    if(expires_at < Date.now()){
-
-      const sql = `DELETE FROM otps WHERE phone = ${phone}`
-      await adb.query(sql)
-      throw new BadRequestError("OTP has expired, please request again")
+    if (expires_at < Date.now()) {
+      const sql = `DELETE FROM otps WHERE phone = ${phone}`;
+      await adb.query(sql);
+      throw new BadRequestError("OTP has expired, please request again");
     }
 
-    const validateOTP = await bcrypt.compare(otp, hashedOTP)
-    if(!validateOTP){
-      throw new BadRequestError("Invalid OTP")
+    const validateOTP = await bcrypt.compare(otp, hashedOTP);
+    if (!validateOTP) {
+      throw new BadRequestError("Invalid OTP");
     }
     await adb.query(`UPDATE users SET status = 2 WHERE phone = '${phone}'`);
-    const sql1 = `DELETE FROM otps WHERE phone = ${phone}`
-    await adb.query(sql1)
-    return
-
+    const sql1 = `DELETE FROM otps WHERE phone = ${phone}`;
+    await adb.query(sql1);
+    return;
   }
 
   public static async verifyAuthResetOTP(body) {
@@ -125,42 +136,40 @@ class UserService {
       throw new BadRequestError("Invalid OTP");
     }
 
-    const {expires_at} = UserOTPVerificationRecords[0][0]
-    const hashedOTP = UserOTPVerificationRecords[0][0].otp
+    const { expires_at } = UserOTPVerificationRecords[0][0];
+    const hashedOTP = UserOTPVerificationRecords[0][0].otp;
 
-    if(expires_at < Date.now()){
-
-      const sql = `DELETE FROM otps WHERE phone = ${phone}`
-      await adb.query(sql)
-      throw new BadRequestError("OTP has expired, please request again")
+    if (expires_at < Date.now()) {
+      const sql = `DELETE FROM otps WHERE phone = ${phone}`;
+      await adb.query(sql);
+      throw new BadRequestError("OTP has expired, please request again");
     }
-    
-    const validateOTP = await bcrypt.compare(otp, hashedOTP)
-    if(!validateOTP){
-      throw new BadRequestError("Invalid OTP")
+
+    const validateOTP = await bcrypt.compare(otp, hashedOTP);
+    if (!validateOTP) {
+      throw new BadRequestError("Invalid OTP");
     }
 
     const hashedPassword = await bcrypt.hash(password, 12);
-    await adb.query(`UPDATE users SET password = '${hashedPassword}' WHERE phone = '${phone}'`);
-    const sql1 = `DELETE FROM otps WHERE phone = ${phone}`
-    await adb.query(sql1)
-    return
-
+    await adb.query(
+      `UPDATE users SET password = '${hashedPassword}' WHERE phone = '${phone}'`
+    );
+    const sql1 = `DELETE FROM otps WHERE phone = ${phone}`;
+    await adb.query(sql1);
+    return;
   }
 
-  public static async resendEmailOTP(body){
-
-    const {phone, email} = body
-    const sql1 = `DELETE FROM otps WHERE phone = ${phone}`
-    await adb.query(sql1)
+  public static async resendEmailOTP(body) {
+    const { phone, email } = body;
+    const sql1 = `DELETE FROM otps WHERE phone = ${phone}`;
+    await adb.query(sql1);
     sendOtpVerificationEmail(email, phone);
   }
 
-  public static async resendSmsOTP(body){
-
-    const {phone, email} = body
-    const sql1 = `DELETE FROM otps WHERE phone = ${phone}`
-    await adb.query(sql1)
+  public static async resendSmsOTP(body) {
+    const { phone, email } = body;
+    const sql1 = `DELETE FROM otps WHERE phone = ${phone}`;
+    await adb.query(sql1);
     sendOtpVerificationSms(phone);
   }
 
@@ -179,8 +188,8 @@ class UserService {
   public static async login(body) {
     const sql = `SELECT * FROM users WHERE email = '${body.login}' OR phone = '${body.login}'`;
     const result = await adb.query(sql);
-    if (!result[0][0]) {
-      throw new BadRequestError();
+    if (result[0][0].password == null) {
+      throw new BadRequestError("Please complete your registration");
     }
 
     const valid = await bcrypt.compare(body.password, result[0][0].password);
@@ -189,14 +198,31 @@ class UserService {
     }
     const authToken = await Jwt.issue({
       email: result[0][0].email,
-      id: result[0][0].id,
+      id: result[0][0].slug,
       firstName: result[0][0].firstName,
       lastName: result[0][0].lastName,
       gender: result[0][0].gender,
     });
+
+    const payload = {
+      user_id: result[0][0].slug,
+      app_version: body.appVersion,
+      device_id: body.deviceId,
+      manufacturer_id: body.manufacturerId,
+      name: body.name,
+      os_version: body.osVersion,
+      push_notification_token: body.pushNotificationToken,
+      type: body.type,
+    };
+
+    await adb.query(`DELETE FROM devices WHERE user_id = '${result[0][0].slug}'`);
+    const sql1 = `INSERT INTO devices SET ?`;
+    await adb.query(sql1, payload);
+
+
     return {
       token: authToken,
-      id: result[0][0].id,
+      id: result[0][0].slug,
       phone: result[0][0].phone,
       email: result[0][0].email,
       firstName: result[0][0].firstName,
@@ -220,11 +246,11 @@ class UserService {
   }
 
   public static async forgotPassword(req, user) {
-    console.log(req.body)
-    const result = await this.getUserByPhone(req.body.phone)
-    console.log(result)
-    if(!result){
-       return "Sms has been sent";
+    console.log(req.body);
+    const result = await this.getUserByPhone(req.body.phone);
+    console.log(result);
+    if (!result) {
+      return "Sms has been sent";
     }
     sendOtpForgotSms(result.first_name, req.body.phone);
     return "Sms has been sent";
@@ -278,13 +304,11 @@ class UserService {
     return;
   }
 
-
   public static async setPassword(body) {
+    const user = await this.getUserByPhone(body.phone);
 
-    const user = await this.getUserByPhone(body.phone)
-
-    if(user.status != 2){
-      throw new ForbiddenError()
+    if (user.status != 2) {
+      throw new ForbiddenError();
     }
 
     const hashedPassword = await bcrypt.hash(body.password, 12);
@@ -295,11 +319,10 @@ class UserService {
   }
 
   public static async setEmail(body) {
+    const user = await this.getUserByPhone(body.phone);
 
-    const user = await this.getUserByPhone(body.phone)
-    
-    if(user.status != 1){
-      throw new ForbiddenError()
+    if (user.status != 1) {
+      throw new ForbiddenError();
     }
 
     const sql = `UPDATE users SET email = '${body.email}' WHERE phone = '${body.phone}'`;
@@ -308,16 +331,16 @@ class UserService {
     return;
   }
 
-  public static async sendSmsOTP(body){
-    sendSms("This is your OTP 23236")
+  public static async sendSmsOTP(body) {
+    sendSms("This is your OTP 23236");
   }
 
   public static async setImage(req) {
     const result = await this.getUserByPhone(req.body.phone);
     var image;
 
-    if(result.status != 3){
-      throw new ForbiddenError()
+    if (result.status != 3) {
+      throw new ForbiddenError();
     }
     if (!req.file) {
       image = `/uploads/profile/${result.photo}`;
