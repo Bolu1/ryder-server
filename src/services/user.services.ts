@@ -34,7 +34,6 @@ class UserService {
       first_name: firstName.trim(),
       last_name: lastName.trim(),
       slug: slug,
-      photo: "/static/profile/default.png",
     };
 
     // check if user exists
