@@ -28,11 +28,11 @@ class UserService {
     // const hashedPassword = await bcrypt.hash(password, 12);
     //payload to the database
     const payload = {
-      gender: gender,
-      nationality: nationality,
-      phone: phone,
-      first_name: firstName,
-      last_name: lastName,
+      gender: gender.trim(),
+      nationality: nationality.trim(),
+      phone: phone.trim(),
+      first_name: firstName.trim(),
+      last_name: lastName.trim(),
       slug: slug,
       photo: "/static/profile/default.png",
     };
@@ -41,10 +41,10 @@ class UserService {
     const result = await this.getUserByPhone(phone);
     if (result) {
       if (result.status == 0) {
-        const sql = `DELETE FROM otps WHERE phone = ${phone}`;
+        const sql = `DELETE FROM otps WHERE phone = '${phone}'`;
         await adb.query(sql);
 
-        const sql1 = `DELETE FROM phone WHERE phone = ${phone}`;
+        const sql1 = `DELETE FROM phone WHERE phone = '${phone}'`;
         await adb.query(sql1);
       }
       if (result.status == 1) {
@@ -80,7 +80,7 @@ class UserService {
     const hashedOTP = UserOTPVerificationRecords[0][0].otp;
 
     if (expires_at < Date.now()) {
-      const sql = `DELETE FROM otps WHERE phone = ${phone}`;
+      const sql = `DELETE FROM otps WHERE phone = '${phone}'`;
       await adb.query(sql);
       throw new BadRequestError("OTP has expired, please request again");
     }
@@ -90,7 +90,7 @@ class UserService {
       throw new BadRequestError("Invalid OTP");
     }
     await adb.query(`UPDATE users SET status = 3 WHERE phone = '${phone}'`);
-    const sql1 = `DELETE FROM otps WHERE phone = ${phone}`;
+    const sql1 = `DELETE FROM otps WHERE phone = '${phone}'`;
     await adb.query(sql1);
     return;
   }
@@ -110,7 +110,7 @@ class UserService {
     const hashedOTP = UserOTPVerificationRecords[0][0].otp;
 
     if (expires_at < Date.now()) {
-      const sql = `DELETE FROM otps WHERE phone = ${phone}`;
+      const sql = `DELETE FROM otps WHERE phone = '${phone}'`;
       await adb.query(sql);
       throw new BadRequestError("OTP has expired, please request again");
     }
@@ -120,7 +120,7 @@ class UserService {
       throw new BadRequestError("Invalid OTP");
     }
     await adb.query(`UPDATE users SET status = 2 WHERE phone = '${phone}'`);
-    const sql1 = `DELETE FROM otps WHERE phone = ${phone}`;
+    const sql1 = `DELETE FROM otps WHERE phone = '${phone}'`;
     await adb.query(sql1);
     return;
   }
@@ -140,7 +140,7 @@ class UserService {
     const hashedOTP = UserOTPVerificationRecords[0][0].otp;
 
     if (expires_at < Date.now()) {
-      const sql = `DELETE FROM otps WHERE phone = ${phone}`;
+      const sql = `DELETE FROM otps WHERE phone = '${phone}'`;
       await adb.query(sql);
       throw new BadRequestError("OTP has expired, please request again");
     }
@@ -154,21 +154,21 @@ class UserService {
     await adb.query(
       `UPDATE users SET password = '${hashedPassword}' WHERE phone = '${phone}'`
     );
-    const sql1 = `DELETE FROM otps WHERE phone = ${phone}`;
+    const sql1 = `DELETE FROM otps WHERE phone = '${phone}'`;
     await adb.query(sql1);
     return;
   }
 
   public static async resendEmailOTP(body) {
     const { phone, email } = body;
-    const sql1 = `DELETE FROM otps WHERE phone = ${phone}`;
+    const sql1 = `DELETE FROM otps WHERE phone = '${phone}'`;
     await adb.query(sql1);
     // sendOtpVerificationEmail(email, phone);
   }
 
   public static async resendSmsOTP(body) {
     const { phone, email } = body;
-    const sql1 = `DELETE FROM otps WHERE phone = ${phone}`;
+    const sql1 = `DELETE FROM otps WHERE phone = '${phone}'`;
     await adb.query(sql1);
     // sendOtpVerificationSms(phone);
   }
