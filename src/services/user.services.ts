@@ -307,9 +307,9 @@ class UserService {
   public static async setPassword(body) {
     const user = await this.getUserByPhone(body.phone);
 
-    if (user.status != 2) {
-      throw new ForbiddenError();
-    }
+    // if (user.status != 2) {
+    //   throw new ForbiddenError();
+    // }
 
     const hashedPassword = await bcrypt.hash(body.password, 12);
 
@@ -321,9 +321,9 @@ class UserService {
   public static async setEmail(body) {
     const user = await this.getUserByPhone(body.phone);
 
-    if (user.status != 1) {
-      throw new ForbiddenError();
-    }
+    // if (user.status != 1) {
+    //   throw new ForbiddenError();
+    // }
 
     const sql = `UPDATE users SET email = '${body.email}' WHERE phone = '${body.phone}'`;
     await adb.query(sql);
@@ -339,9 +339,9 @@ class UserService {
     const result = await this.getUserByPhone(req.body.phone);
     var image;
 
-    if (result.status != 3) {
-      throw new ForbiddenError();
-    }
+    // if (result.status != 3) {
+    //   throw new ForbiddenError();
+    // }
     if (!req.file) {
       image = `/uploads/profile/${result.photo}`;
     } else {
