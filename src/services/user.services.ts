@@ -185,15 +185,20 @@ class UserService {
   }
 
   public static async login(body) {
+    const deviceInfo = body.deviceInfo
     const sql = `SELECT * FROM users WHERE email = '${body.login}' OR phone = '${body.login}'`;
     const result = await adb.query(sql);
+    console.log(result[0][0])
+    if(result[0][0].length < 1){
+      throw new BadRequestError("Invalid login details");
+    }
     if (result[0][0].password == null) {
       throw new BadRequestError("Please complete your registration");
     }
 
     const valid = await bcrypt.compare(body.password, result[0][0].password);
     if (!valid) {
-      throw new BadRequestError();
+      throw new BadRequestError("Invalid login details");
     }
     const authToken = await Jwt.issue({
       email: result[0][0].email,
@@ -205,13 +210,13 @@ class UserService {
 
     const payload = {
       user_id: result[0][0].slug,
-      app_version: body.appVersion,
-      device_id: body.deviceId,
-      manufacturer_id: body.manufacturerId,
-      name: body.name,
-      os_version: body.osVersion,
-      push_notification_token: body.pushNotificationToken,
-      type: body.type,
+      app_version: deviceInfo.appVersion,
+      device_id: deviceInfo.deviceId,
+      manufacturer_id: deviceInfo.manufacturerId,
+      name: deviceInfo.name,
+      os_version: deviceInfo.osVersion,
+      push_notification_token: deviceInfo.pushNotificationToken,
+      type: deviceInfo.type,
     };
 
     await adb.query(`DELETE FROM devices WHERE user_id = '${result[0][0].slug}'`);
@@ -338,7 +343,12 @@ class UserService {
   public static async setImage(req) {
     const result = await this.getUserByPhone(req.body.phone);
     var image;
-
+    if(!result){
+      throw new BadRequestError("Image change not successful")
+    }
+    console.log(result)
+    console.log(req.file)
+   
     // if (result.status != 3) {
     //   throw new ForbiddenError();
     // }

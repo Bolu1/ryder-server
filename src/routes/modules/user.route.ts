@@ -51,7 +51,7 @@ router.post('/confirmPassword', controller.confirmPassword)
 router.post('/sendSmsOTP', controller.sendSmsOTP)
 router.post('/setPassword', controller.setPassword)
 router.post('/setEmail', controller.setEmail)
-router.post('/setImage', upload.single("file"), controller.setImage)
+router.post('/setImage', upload.single("image"), controller.setImage)
 // protected routes
 router.get('/users', isAdmin, controller.getUsers)
 router.post('/update', controller.updateProfile)
