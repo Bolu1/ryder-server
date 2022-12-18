@@ -233,6 +233,7 @@ class UserService {
       lastName: result[0][0].lastName,
       gender: result[0][0].gender,
       photo: result[0][0].photo,
+      country: result[0][0].nationality
     };
   }
 
@@ -284,9 +285,9 @@ class UserService {
     const result = await this.getUserByEmail(user.email);
     var image;
     if (!req.file) {
-      image = `/uploads/profile/${result.photo}`;
+      image = `/static/${result.photo}`;
     } else {
-      image = `/uploads/profile/${req.file.originalname}`;
+      image = `/static/${req.file.originalname}`;
       if (image != result.photo && result.photo) {
         fs.unlinkSync(`.${result.photo}`);
       }
@@ -304,7 +305,7 @@ class UserService {
       photo: image,
     };
 
-    const sql = `UPDATE users SET ? WHERE email= '${user.email}'`;
+    const sql = `UPDATE users SET image = ${image}? WHERE email= '${user.email}'`;
     await adb.query(sql, payload);
     return;
   }
@@ -353,15 +354,15 @@ class UserService {
     //   throw new ForbiddenError();
     // }
     if (!req.file) {
-      image = `/uploads/profile/${result.photo}`;
+      image = `static/${result.photo}`;
     } else {
-      image = `/uploads/profile/${req.file.originalname}`;
+      image = `static/${req.file.originalname}`;
       if (image != result.photo && result.photo) {
         fs.unlinkSync(`.${result.photo}`);
       }
     }
 
-    const sql = `UPDATE users SET photo = ${image}? WHERE email= '${req.body.phone}'`;
+    const sql = `UPDATE users SET photo = '${image}' WHERE phone = '${req.body.phone}'`;
     await adb.query(sql);
     return;
   }

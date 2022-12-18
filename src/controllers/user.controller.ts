@@ -138,6 +138,6 @@ exports.sendSmsOTP = asyncHandler(async (req: Request, res: Response) => {
 exports.setImage = asyncHandler(
   async (req: Request, res: Response) => {
     const result = await UserService.setImage(req);
-    return new SuccessResponse("OTP has been sent", result).send(res);
+    return new SuccessResponse("Image has been set", result).send(res);
   }
 );
