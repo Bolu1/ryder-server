@@ -190,11 +190,11 @@ class UserService {
     const sql = `SELECT * FROM users WHERE email = '${body.login}' OR phone = '${body.login}'`;
     const result = await adb.query(sql);
     console.log(result[0][0])
-    if(result[0][0].length < 1){
+    if(result[0].length < 1){
       throw new BadRequestError("Invalid login details");
     }
     if (result[0][0].password == null) {
-      throw new BadRequestError("Please complete your registration");
+      throw new BadRequestError("Incomplete registration, please set a password");
     }
 
     const valid = await bcrypt.compare(body.password, result[0][0].password);
