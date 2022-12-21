@@ -43,8 +43,9 @@ class UserService {
         const sql = `DELETE FROM otps WHERE phone = '${phone}'`;
         await adb.query(sql);
 
-        const sql1 = `DELETE FROM phone WHERE phone = '${phone}'`;
+        const sql1 = `DELETE FROM users WHERE phone = '${phone}'`;
         await adb.query(sql1);
+        return
       }
       if (result.status == 1) {
         throw new BadRequestError("Incomplete registration, enter email");
@@ -229,10 +230,10 @@ class UserService {
       id: result[0][0].slug,
       phone: result[0][0].phone,
       email: result[0][0].email,
-      firstName: result[0][0].firstName,
-      lastName: result[0][0].lastName,
+      firstName: result[0][0].first_name,
+      lastName: result[0][0].last_name,
       gender: result[0][0].gender,
-      photo: result[0][0].photo,
+      photo: "https://ryder-server.onrender.com/"+result[0][0].photo,
       country: result[0][0].nationality
     };
   }
