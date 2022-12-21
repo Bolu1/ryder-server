@@ -38,7 +38,7 @@ pool.query("select 1 + 1", (err: any, rows: any) => {
 app.use(bodyParser.json())
 app.use(bodyParser.text())
 app.use(bodyParser.urlencoded({ extended: false }))
-app.use('/uploads', express.static('uploads'))
+app.use('/static', express.static('static'))
 // sanitize data sql or mongo injection
 app.use(mongoSanitize());
 

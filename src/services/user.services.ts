@@ -357,10 +357,10 @@ class UserService {
     if (!req.file) {
       image = `static/${result.photo}`;
     } else {
-      image = `static/${req.file.originalname}`;
-      if (image != result.photo && result.photo) {
-        fs.unlinkSync(`.${result.photo}`);
-      }
+      image = `static/${req.file.filename}`;
+      // if (image != result.photo && result.photo) {
+      //   fs.unlinkSync(`.${result.photo}`);
+      // }
     }
 
     const sql = `UPDATE users SET photo = '${image}' WHERE phone = '${req.body.phone}'`;
