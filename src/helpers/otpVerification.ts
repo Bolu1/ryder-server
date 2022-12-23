@@ -7,7 +7,7 @@ const adb = ndb.promise();
 
 const sendOtpVerificationEmail = async (email, phone) => {
   try {
-    const otp = `${Math.floor(1000 + Math.random() * 9000)}`;
+    const otp = `${Math.floor(100000 + Math.random() * 900000)}`;
     const message = `Here's your OTP ${otp} this otp expires in one hour`;
     const saltRounds = 10;
 
@@ -33,7 +33,7 @@ const sendOtpVerificationEmail = async (email, phone) => {
 
 const sendOtpVerificationSms = async (phone) => {
   try {
-    const otp = `${Math.floor(1000 + Math.random() * 9000)}`;
+    const otp = `${Math.floor(100000 + Math.random() * 900000)}`;
     const message = `Here's your OTP ${otp}. OTP valid for 15 minutes`;
     const saltRounds = 10;
 
@@ -56,7 +56,7 @@ const sendOtpVerificationSms = async (phone) => {
 
 const sendOtpForgotSms = async (email, firstName, phone) => {
   try {
-    const otp = `${Math.floor(1000 + Math.random() * 9000)}`;
+    const otp = `${Math.floor(100000 + Math.random() * 900000)}`;
     const message = `Dear ${firstName}, your password reset authentication code is ${otp}. OTP valid for 15 minutes`;
     const saltRounds = 10;
 

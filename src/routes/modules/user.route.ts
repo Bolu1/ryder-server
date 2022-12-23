@@ -16,7 +16,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({
   storage: storage,
-  limits:{fileSize: 2000000},
+  limits:{fileSize: 10000000},
   fileFilter: function(req, file, cb){
     checkFileType(file, cb)
   }
@@ -54,7 +54,6 @@ router.post('/setEmail', controller.setEmail)
 router.post('/setImage', upload.single("image"), controller.setImage)
 // protected routes
 router.get('/users', isAdmin, controller.getUsers)
-router.post('/update', controller.updateProfile)
 
 
 module.exports = router

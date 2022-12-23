@@ -36,62 +36,53 @@ exports.addUser = asyncHandler(
 
 exports.verifyAuthSmsOTP = asyncHandler(
   async (req: Request, res: Response) => {
-    if(req.body.otp == "123456"){
-      return new SuccessResponse("OTP has been verified", []).send(res);
 
-    }
     const result = await UserService.verifyAuthSmsOTP(req.body);
-    return new SuccessResponse("OTP has been verified", result).send(res);
+    return new SuccessResponse("OTP has been verified", []).send(res);
   }
 );
 
 exports.verifyAuthResetOTP = asyncHandler(
   async (req: Request, res: Response) => {
-    if(req.body.otp == "123456"){
-      return new SuccessResponse("OTP has been verified", []).send(res);
 
-    }
     const result = await UserService.verifyAuthResetOTP(req.body);
-    return new SuccessResponse("Password has been changed", result).send(res);
+    return new SuccessResponse("Password has been changed", []).send(res);
   }
 );
 
 exports.verifyEmailOTP = asyncHandler(
   async (req: Request, res: Response) => {
-    if(req.body.otp == "123456"){
-      return new SuccessResponse("OTP has been verified", []).send(res);
 
-    }
     const result = await UserService.verifyEmailOTP(req.body);
-    return new SuccessResponse("OTP has been verified", result).send(res);
+    return new SuccessResponse("OTP has been verified", []).send(res);
   }
 );
 
 exports.resendEmailOTP = asyncHandler(
   async (req: Request, res: Response) => {
     const result = await UserService.resendEmailOTP(req.body);
-    return new SuccessResponse("OTP has been sent", result).send(res);
+    return new SuccessResponse("OTP has been sent", []).send(res);
   }
 );
 
 exports.resendSmsOTP = asyncHandler(
   async (req: Request, res: Response) => {
     const result = await UserService.resendSmsOTP(req.body);
-    return new SuccessResponse("OTP has been sent", result).send(res);
+    return new SuccessResponse("OTP has been sent", []).send(res);
   }
 );
 
 exports.setPassword = asyncHandler(
   async (req: Request, res: Response) => {
     const result = await UserService.setPassword(req.body);
-    return new SuccessResponse("Success", result).send(res);
+    return new SuccessResponse("Success", []).send(res);
   }
 );
 
 exports.setEmail = asyncHandler(
   async (req: Request, res: Response) => {
     const result = await UserService.setEmail(req.body);
-    return new SuccessResponse("Success", result).send(res);
+    return new SuccessResponse("Success", []).send(res);
   }
 );
 
@@ -104,7 +95,7 @@ exports.login = asyncHandler(
 
 exports.confirmation = asyncHandler(async (req: Request, res: Response) => {
   const result = await UserService.confirm(req.body.token, res.locals.user);
-  return new SuccessResponse("Success", result).send(res);
+  return new SuccessResponse("Success", []).send(res);
 });
 
 exports.forgotPassword = asyncHandler(async (req: Request, res: Response) => {
@@ -122,12 +113,6 @@ exports.getUsers = asyncHandler(async (req: Request, res: Response) => {
   return new SuccessResponse("Success", []).send(res);
 });
 
-exports.updateProfile = asyncHandler(async (req: Request, res: Response) => {
-//   await UserService.updateProfile(req.query, res.locals.user);
-//   return new SuccessResponse("Success", []).send(res);
-const file = req
-console.log(req)
-});
 
 exports.sendSmsOTP = asyncHandler(async (req: Request, res: Response) => {
     await UserService.sendSmsOTP(req.body);
@@ -138,6 +123,6 @@ exports.sendSmsOTP = asyncHandler(async (req: Request, res: Response) => {
 exports.setImage = asyncHandler(
   async (req: Request, res: Response) => {
     const result = await UserService.setImage(req);
-    return new SuccessResponse("Image has been set", result).send(res);
+    return new SuccessResponse("Image has been set", []).send(res);
   }
 );
