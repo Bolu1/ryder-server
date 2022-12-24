@@ -44,7 +44,7 @@ class DriverService {
 
         const sql1 = `DELETE FROM drivers WHERE phone = '${phone}'`;
         await adb.query(sql1);
-        return
+        return;
       }
       if (result.status == 1) {
         throw new BadRequestError("Incomplete registration, enter email");
@@ -69,9 +69,9 @@ class DriverService {
     if (!phone || !otp) {
       throw new BadRequestError("Empty otp details are not allowed");
     }
-    if(body.otp == "123456"){
+    if (body.otp == "123456") {
       await adb.query(`UPDATE drivers SET status = 3 WHERE phone = '${phone}'`);
-      return
+      return;
     }
     const sql = `SELECT * FROM otps WHERE phone = ${phone}`;
     const UserOTPVerificationRecords = await adb.query(sql);
@@ -103,9 +103,9 @@ class DriverService {
     if (!phone || !otp) {
       throw new BadRequestError("Empty otp details are not allowed");
     }
-    if(body.otp == "123456"){
+    if (body.otp == "123456") {
       await adb.query(`UPDATE drivers SET status = 2 WHERE phone = '${phone}'`);
-      return
+      return;
     }
     const sql = `SELECT * FROM otps WHERE phone = ${phone}`;
     const UserOTPVerificationRecords = await adb.query(sql);
@@ -193,15 +193,17 @@ class DriverService {
   }
 
   public static async login(body) {
-    const deviceInfo = body.deviceInfo
+    const deviceInfo = body.deviceInfo;
     const sql = `SELECT * FROM drivers WHERE email = '${body.login}' OR phone = '${body.login}'`;
     const result = await adb.query(sql);
-    console.log(result[0][0])
-    if(result[0].length < 1){
+    console.log(result[0][0]);
+    if (result[0].length < 1) {
       throw new BadRequestError("Invalid login details");
     }
     if (result[0][0].password == null) {
-      throw new BadRequestError("Incomplete registration, please set a password");
+      throw new BadRequestError(
+        "Incomplete registration, please set a password"
+      );
     }
 
     const valid = await bcrypt.compare(body.password, result[0][0].password);
@@ -227,10 +229,11 @@ class DriverService {
       type: deviceInfo.type,
     };
 
-    await adb.query(`DELETE FROM devices WHERE user_id = '${result[0][0].slug}'`);
+    await adb.query(
+      `DELETE FROM devices WHERE user_id = '${result[0][0].slug}'`
+    );
     const sql1 = `INSERT INTO devices SET ?`;
     await adb.query(sql1, payload);
-
 
     return {
       token: authToken,
@@ -240,8 +243,8 @@ class DriverService {
       firstName: result[0][0].first_name,
       lastName: result[0][0].last_name,
       gender: result[0][0].gender,
-      photo: "https://ryder-server.onrender.com/"+result[0][0].photo,
-      country: result[0][0].nationality
+      photo: "https://ryder-server.onrender.com/" + result[0][0].photo,
+      country: result[0][0].nationality,
     };
   }
 
@@ -347,22 +350,23 @@ class DriverService {
 
   public static async sendSmsOTP(body) {
     const otp = `${Math.floor(100000 + Math.random() * 900000)}`;
-    console.log(otp)
+    console.log(otp);
   }
 
   public static async setImage(req) {
     const result = await this.getUserByPhone(req.body.phone);
     var image;
-    if(!result){
-      throw new BadRequestError("Image change not successful")
-    }   
+    if (!result) {
+      throw new BadRequestError("Image change not successful");
+    }
     // if (result.status != 3) {
     //   throw new ForbiddenError();
     // }
 
-      image = `static/${req.file.filename}`;
-      await sharp(req.file.buffer).resize(300, 300).toFile(`.${image}`)
-        fs.unlinkSync(`.${result.photo}`);
+    image = `static/${req.file.filename}`;
+    if(result.photo != null){
+      fs.unlinkSync(`./${result.photo}`);
+    }
 
     const sql = `UPDATE drivers SET photo = '${image}' WHERE phone = '${req.body.phone}'`;
     await adb.query(sql);
@@ -380,18 +384,17 @@ class DriverService {
       year: req.body.year,
       colour: req.body.colour,
       driver_license: req.body.driver_license,
-      slug: slug
+      slug: slug,
     };
 
     const sql = `INSERT INTO car_details SET ?`;
     await adb.query(sql, payload);
 
-    console.log(req.files)
+    console.log(req.files);
     for (let i = 0; i < req.files.length; i++) {
       const sql = `INSERT INTO car_images SET car_id = '${slug}', image_url = '${req.files[i].path}'`;
       await adb.query(sql);
     }
-
 
     return;
   }

@@ -385,9 +385,9 @@ class UserService {
     //   throw new ForbiddenError();
     // }
     image = `static/${req.file.filename}`;
-    console.log(req.file.buffer)
-    await sharp(req.file.buffer).resize(300, 300).toFile(`./${req.file.path}`)
-    fs.unlinkSync(`./${result.photo}`);
+    if(result.photo != null){
+      fs.unlinkSync(`./${result.photo}`);
+    }
 
     const sql = `UPDATE users SET photo = '${image}' WHERE phone = '${req.body.phone}'`;
     await adb.query(sql);
