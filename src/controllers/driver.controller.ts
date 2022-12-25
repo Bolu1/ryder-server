@@ -130,8 +130,3 @@ exports.setImage = asyncHandler(
     return new SuccessResponse("Image has been set", []).send(res);
   }
 );
-
-exports.addCarDetails = asyncHandler(async (req: Request, res: Response) => {
-  await DriverService.addCarDetails(req);
-  return new SuccessResponse("Success", []).send(res);
-});

@@ -18,6 +18,7 @@ import {
 } from "../core/ApiError";
 const sharp = require("sharp");
 import Jwt from "../core/Jwt";
+import DriverService from "./driver.services";
 
 const adb = ndb.promise();
 
@@ -48,10 +49,10 @@ class UserService {
         return
       }
       if (result.status == 1) {
-        throw new BadRequestError("Incomplete registration, enter email");
+        throw new BadRequestError("Incomplete registration, please set an email");
       }
       if (result.status == 2) {
-        throw new BadRequestError("Incomplete registration, enter password");
+        throw new BadRequestError("Incomplete registration, please set a password");
       } else {
         throw new ConflictError("Phone number already in use");
       }
@@ -351,7 +352,7 @@ class UserService {
 
     const hashedPassword = await bcrypt.hash(body.password, 12);
 
-    const sql = `UPDATE users SET password = '${hashedPassword}', status = 3 WHERE phone = '${body.phone}'`;
+    const sql = `UPDATE users SET password = '${hashedPassword}', status = 3 WHERE phone = '${body.login}' OR email = '${body.login}'`;
     await adb.query(sql);
     return;
   }
@@ -393,6 +394,8 @@ class UserService {
     await adb.query(sql);
     return;
   }
+
+
 }
 
 export default UserService;

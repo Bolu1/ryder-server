@@ -47,11 +47,15 @@ class DriverService {
         return;
       }
       if (result.status == 1) {
-        throw new BadRequestError("Incomplete registration, enter email");
+        throw new BadRequestError("Incomplete registration, enter an email");
       }
       if (result.status == 2) {
-        throw new BadRequestError("Incomplete registration, enter password");
-      } else {
+        throw new BadRequestError("Incomplete registration, enter a password");
+      } 
+      if (result.status == 3) {
+        throw new BadRequestError("Incomplete registration, complete your KYC");
+      }
+      else {
         throw new ConflictError("Phone number already in use");
       }
     }
@@ -69,44 +73,12 @@ class DriverService {
     if (!phone || !otp) {
       throw new BadRequestError("Empty otp details are not allowed");
     }
-    if (body.otp == "123456") {
-      await adb.query(`UPDATE drivers SET status = 3 WHERE phone = '${phone}'`);
-      return;
-    }
-    const sql = `SELECT * FROM otps WHERE phone = ${phone}`;
-    const UserOTPVerificationRecords = await adb.query(sql);
-    if (UserOTPVerificationRecords[0].length <= 0) {
-      throw new BadRequestError("Invalid OTP");
-    }
 
-    const { expires_at } = UserOTPVerificationRecords[0][0];
-    const hashedOTP = UserOTPVerificationRecords[0][0].otp;
-
-    if (expires_at < Date.now()) {
-      const sql = `DELETE FROM otps WHERE phone = '${phone}'`;
-      await adb.query(sql);
-      throw new BadRequestError("OTP has expired, please request again");
-    }
-
-    const validateOTP = await bcrypt.compare(otp, hashedOTP);
-    if (!validateOTP) {
-      throw new BadRequestError("Invalid OTP");
-    }
-    await adb.query(`UPDATE drivers SET status = 3 WHERE phone = '${phone}'`);
-    const sql1 = `DELETE FROM otps WHERE phone = '${phone}'`;
-    await adb.query(sql1);
-    return;
-  }
-
-  public static async verifyAuthSmsOTP(body) {
-    const { phone, otp } = body;
-    if (!phone || !otp) {
-      throw new BadRequestError("Empty otp details are not allowed");
-    }
-    if (body.otp == "123456") {
+    if(body.otp == "123456"){
       await adb.query(`UPDATE drivers SET status = 2 WHERE phone = '${phone}'`);
-      return;
+      return
     }
+
     const sql = `SELECT * FROM otps WHERE phone = ${phone}`;
     const UserOTPVerificationRecords = await adb.query(sql);
     if (UserOTPVerificationRecords[0].length <= 0) {
@@ -127,6 +99,43 @@ class DriverService {
       throw new BadRequestError("Invalid OTP");
     }
     await adb.query(`UPDATE drivers SET status = 2 WHERE phone = '${phone}'`);
+    const sql1 = `DELETE FROM otps WHERE phone = '${phone}'`;
+    await adb.query(sql1);
+    return;
+  }
+
+  public static async verifyAuthSmsOTP(body) {
+    const { phone, otp } = body;
+    if (!phone || !otp) {
+      throw new BadRequestError("Empty otp details are not allowed");
+    }
+
+
+    if(body.otp == "123456"){
+      await adb.query(`UPDATE drivers SET status = 1 WHERE phone = '${phone}'`);
+      return
+    }
+
+    const sql = `SELECT * FROM otps WHERE phone = ${phone}`;
+    const UserOTPVerificationRecords = await adb.query(sql);
+    if (UserOTPVerificationRecords[0].length <= 0) {
+      throw new BadRequestError("Invalid OTP");
+    }
+
+    const { expires_at } = UserOTPVerificationRecords[0][0];
+    const hashedOTP = UserOTPVerificationRecords[0][0].otp;
+
+    if (expires_at < Date.now()) {
+      const sql = `DELETE FROM otps WHERE phone = '${phone}'`;
+      await adb.query(sql);
+      throw new BadRequestError("OTP has expired, please request again");
+    }
+
+    const validateOTP = await bcrypt.compare(otp, hashedOTP);
+    if (!validateOTP) {
+      throw new BadRequestError("Invalid OTP");
+    }
+    await adb.query(`UPDATE drivers SET status = 1 WHERE phone = '${phone}'`);
     const sql1 = `DELETE FROM otps WHERE phone = '${phone}'`;
     await adb.query(sql1);
     return;
@@ -193,17 +202,27 @@ class DriverService {
   }
 
   public static async login(body) {
-    const deviceInfo = body.deviceInfo;
-    const sql = `SELECT * FROM drivers WHERE email = '${body.login}' OR phone = '${body.login}'`;
+    const deviceInfo = body.deviceInfo
+    const sql = `SELECT * FROM users WHERE email = '${body.login}' OR phone = '${body.login}'`;
     const result = await adb.query(sql);
-    console.log(result[0][0]);
-    if (result[0].length < 1) {
+    console.log(result[0][0])
+    if(result[0].length < 1){
       throw new BadRequestError("Invalid login details");
     }
+    if(result[0][0].status == 0){
+      throw new BadRequestError("Incomplete registration, please verify your phone number");
+    }
+    if(result[0][0].status == 1){
+      throw new BadRequestError("Incomplete registration, please set an email");
+    }
+    if(result[0][0].status == 2){
+      throw new BadRequestError("Incomplete registration, please set a password");
+    }
+    if(result[0][0].status == 3){
+      throw new BadRequestError("Incomplete registration, please complete your KYC");
+    }
     if (result[0][0].password == null) {
-      throw new BadRequestError(
-        "Incomplete registration, please set a password"
-      );
+      throw new BadRequestError("Incomplete registration, please set a password");
     }
 
     const valid = await bcrypt.compare(body.password, result[0][0].password);
@@ -229,11 +248,10 @@ class DriverService {
       type: deviceInfo.type,
     };
 
-    await adb.query(
-      `DELETE FROM devices WHERE user_id = '${result[0][0].slug}'`
-    );
+    await adb.query(`DELETE FROM devices WHERE user_id = '${result[0][0].slug}'`);
     const sql1 = `INSERT INTO devices SET ?`;
     await adb.query(sql1, payload);
+
 
     return {
       token: authToken,
@@ -243,10 +261,11 @@ class DriverService {
       firstName: result[0][0].first_name,
       lastName: result[0][0].last_name,
       gender: result[0][0].gender,
-      photo: "https://ryder-server.onrender.com/" + result[0][0].photo,
-      country: result[0][0].nationality,
+      photo: "https://ryder-server.onrender.com/"+result[0][0].photo,
+      country: result[0][0].nationality
     };
   }
+
 
   public static async confirm(token: string, user) {
     const { email } = Jwt.verify(token);
@@ -292,35 +311,6 @@ class DriverService {
     return result[0];
   }
 
-  public static async updateProfile(req, user) {
-    const result = await this.getUserByEmail(user.email);
-    var image;
-    if (!req.file) {
-      image = `/static/${result.photo}`;
-    } else {
-      image = `/static/${req.file.originalname}`;
-      if (image != result.photo && result.photo) {
-        fs.unlinkSync(`.${result.photo}`);
-      }
-    }
-    const hashedPassword = req.body.password
-      ? await bcrypt.hash(req.body.password, 12)
-      : result[0].password;
-    const payload = {
-      firstName: req.body.name.trim() > 4 ? req.body.name : result[0].name,
-      lastName: req.body.name.trim() > 4 ? req.body.name : result[0].name,
-      password:
-        req.body.password.trim().length > 5
-          ? hashedPassword
-          : result[0].password,
-      photo: image,
-    };
-
-    const sql = `UPDATE drivers SET image = ${image}? WHERE email= '${user.email}'`;
-    await adb.query(sql, payload);
-    return;
-  }
-
   public static async setPassword(body) {
     const user = await this.getUserByPhone(body.phone);
 
@@ -330,7 +320,7 @@ class DriverService {
 
     const hashedPassword = await bcrypt.hash(body.password, 12);
 
-    const sql = `UPDATE drivers SET password = '${hashedPassword}', status = 3 WHERE phone = '${body.phone}'`;
+    const sql = `UPDATE drivers SET password = '${hashedPassword}', status = 3 WHERE phone = '${body.login}'  OR email = '${body.login}'`;
     await adb.query(sql);
     return;
   }
@@ -373,31 +363,6 @@ class DriverService {
     return;
   }
 
-  public static async addCarDetails(req) {
-    //payload to the database
-    const slug = generateString(4, true, false);
-    //payload to the database
-    const payload = {
-      phone: req.body.phone,
-      manufacturer: req.body.manufacturer,
-      model: req.body.model,
-      year: req.body.year,
-      colour: req.body.colour,
-      driver_license: req.body.driver_license,
-      slug: slug,
-    };
-
-    const sql = `INSERT INTO car_details SET ?`;
-    await adb.query(sql, payload);
-
-    console.log(req.files);
-    for (let i = 0; i < req.files.length; i++) {
-      const sql = `INSERT INTO car_images SET car_id = '${slug}', image_url = '${req.files[i].path}'`;
-      await adb.query(sql);
-    }
-
-    return;
-  }
 }
 
 export default DriverService;

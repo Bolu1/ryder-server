@@ -1,5 +1,5 @@
 import express from "express"
-const controller = require("../../controllers/driver.controller")
+const controller = require("../../controllers/kyc.controller")
 const isAdmin = require('../../middleware/isAdmin')
 const isAuth = require('../../middleware/isAuth')
 const multer = require('multer')
@@ -39,22 +39,12 @@ const checkFileType = (file, cb) =>{
 
 
 const router = express()
+router.post('/addCarDetails', upload.array('images'), controller.addCarDetails)
+router.post('/addPersonalInformation',  controller.addPersonalInformation)
+router.post('/setImage', upload.single("image"), controller.setImage)
+router.post('/addPaymentDetails',  controller.addPaymentDetails)
+router.get('/getKycStatus/:phone',  controller.getKycStatus)
 
-// non-protected route
-router.post("/signup", controller.addUser)
-router.post("/signin", controller.login)
-router.post("/verifyAuthSmsOTP", controller.verifyAuthSmsOTP)
-router.post("/verifyEmailOTP", controller.verifyEmailOTP)
-router.post("/verifyAuthResetOTP", controller.verifyAuthResetOTP)
-router.post("/resendEmailOTP", controller.resendEmailOTP)
-router.post("/resendSmsOTP", controller.resendSmsOTP)
-router.post('/forgotPassword', controller.forgotPassword)
-router.post('/confirmPassword', controller.confirmPassword)
-router.post('/sendSmsOTP', controller.sendSmsOTP)
-router.post('/setPassword', controller.setPassword)
-router.post('/setEmail', controller.setEmail)
-// protected routes
-router.get('/drivers', isAdmin, controller.getUsers)
 
 
 module.exports = router
