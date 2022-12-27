@@ -35,5 +35,15 @@ exports.addPaymentDetails = asyncHandler(async (req: Request, res: Response) => 
 
 exports.getKycStatus = asyncHandler(async (req: Request, res: Response) => {
   const result = await KycService.getKycStatus(req.params.phone);
+  return new SuccessResponse("Success", result).send(res);
+});
+
+exports.uploadDocument = asyncHandler(async (req: Request, res: Response) => {
+  const result = await KycService.uploadDocument(req);
   return new CreatedResponse("Success", result).send(res);
+});
+
+exports.drivingHistory = asyncHandler(async (req: Request, res: Response) => {
+  const result = await KycService.drivingHistory(req.body);
+  return new CreatedResponse("Success", []).send(res);
 });

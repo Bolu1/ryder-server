@@ -18,6 +18,7 @@ import {
   ForbiddenError,
 } from "../core/ApiError";
 import Jwt from "../core/Jwt";
+import UserService from "./user.services";
 
 const adb = ndb.promise();
 
@@ -34,6 +35,12 @@ class DriverService {
       last_name: lastName.trim(),
       slug: slug,
     };
+
+    // check if the phone number is used by a user
+    const user = await UserService.getUserByPhone(phone)
+    if(user){
+      throw new ConflictError("Phone number already in use");
+    }
 
     // check if user exists
     const result = await this.getUserByPhone(phone);
@@ -328,9 +335,15 @@ class DriverService {
   public static async setEmail(body) {
     const user = await this.getUserByPhone(body.phone);
 
+
     // if (user.status != 1) {
     //   throw new ForbiddenError();
     // }
+
+    const result = await this.getUserByEmail(body.email)
+    if(result){
+      throw new ConflictError("Email already in use");
+    }
 
     const sql = `UPDATE drivers SET email = '${body.email}' WHERE phone = '${body.phone}'`;
     await adb.query(sql);
@@ -361,6 +374,13 @@ class DriverService {
     const sql = `UPDATE drivers SET photo = '${image}' WHERE phone = '${req.body.phone}'`;
     await adb.query(sql);
     return;
+  }
+
+  public static async getNotifications(query, user) {
+    const skip: number = parseInt(query.offset as string) * 20 || 0;
+    const sql = `SELECT * FROM notifications WHERE user_id = '${user.id}' ORDER BY id DESC LIMIT 20 OFFSET ${skip}`;
+    const result = await adb.query(sql);
+    return result[0];
   }
 
 }

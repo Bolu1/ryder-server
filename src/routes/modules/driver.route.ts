@@ -56,5 +56,7 @@ router.post('/setEmail', controller.setEmail)
 // protected routes
 router.get('/drivers', isAdmin, controller.getUsers)
 
+// notifications
+router.get('/notifications', isAuth, controller.getNotifications)
 
 module.exports = router

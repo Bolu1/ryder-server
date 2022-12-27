@@ -40,12 +40,7 @@ const checkFileType = (file, cb) =>{
 
 const router = express()
 router.post('/addCarDetails', upload.array('images'), controller.addCarDetails)
-router.post('/addPersonalInformation',  controller.addPersonalInformation)
-router.post('/setImage', upload.single("image"), controller.setImage)
-router.post('/addPaymentDetails',  controller.addPaymentDetails)
-router.get('/getKycStatus/:phone',  controller.getKycStatus)
-router.post('/uploadDocument', upload.single("file"), controller.uploadDocument)
-router.post('/drivingHistory', controller.drivingHistory)
+
 
 
 

@@ -55,5 +55,9 @@ router.post('/setImage', upload.single("image"), controller.setImage)
 // protected routes
 router.get('/users', isAdmin, controller.getUsers)
 
+// notifications
+router.get('/notifications', isAuth, controller.getNotifications)
+
+
 
 module.exports = router

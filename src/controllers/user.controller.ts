@@ -126,3 +126,10 @@ exports.setImage = asyncHandler(
     return new SuccessResponse("Image has been set", []).send(res);
   }
 );
+
+exports.getNotifications = asyncHandler(
+  async (req: Request, res: Response) => {
+    const result = await UserService.getNotifications(req.query, res.locals.user);
+    return new SuccessResponse("Success", result).send(res);
+  }
+);

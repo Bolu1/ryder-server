@@ -358,11 +358,17 @@ class UserService {
   }
 
   public static async setEmail(body) {
+    
     const user = await this.getUserByPhone(body.phone);
 
     // if (user.status != 1) {
     //   throw new ForbiddenError();
     // }
+
+    const result = await this.getUserByEmail(body.email)
+    if(result){
+      throw new ConflictError("Email already in use");
+    }
 
     const sql = `UPDATE users SET email = '${body.email}' WHERE phone = '${body.phone}'`;
     await adb.query(sql);
@@ -393,6 +399,13 @@ class UserService {
     const sql = `UPDATE users SET photo = '${image}' WHERE phone = '${req.body.phone}'`;
     await adb.query(sql);
     return;
+  }
+
+  public static async getNotifications(query, user) {
+    const skip: number = parseInt(query.offset as string) * 20 || 0;
+    const sql = `SELECT * FROM notifications WHERE user_id = '${user.id}' ORDER BY id DESC LIMIT 20 OFFSET ${skip}`;
+    const result = await adb.query(sql);
+    return result[0];
   }
 
 
