@@ -367,9 +367,10 @@ class DriverService {
     // }
 
     image = `static/${req.file.filename}`;
-    if(result.photo != null){
+
+    if (fs.existsSync(`./${result.photo}`)){
       fs.unlinkSync(`./${result.photo}`);
-    }
+      }
 
     const sql = `UPDATE drivers SET photo = '${image}' WHERE phone = '${req.body.phone}'`;
     await adb.query(sql);

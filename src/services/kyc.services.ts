@@ -96,9 +96,10 @@ class KycService {
     //   throw new ForbiddenError();
     // }
     image = `static/${req.file.filename}`;
-    if (result.photo != null) {
+
+    if (fs.existsSync(`./${result.photo}`)){
       fs.unlinkSync(`./${result.photo}`);
-    }
+      }
 
     const sql = `UPDATE drivers SET photo = '${image}' WHERE phone = '${req.body.phone}'`;
     await adb.query(sql);
@@ -179,7 +180,9 @@ class KycService {
       await adb.query(
         `DELETE FROM driver_documents WHERE driver_phone = '${req.body.phone}' AND file_type = "${req.body.type}"`
       );
+      if (fs.existsSync(`./${driver_doc[0][0].file_url}`)){
       fs.unlinkSync(`./${driver_doc[0][0].file_url}`);
+      }
     }
 
     const slug = generateString(4, true, false);

@@ -392,9 +392,9 @@ class UserService {
     //   throw new ForbiddenError();
     // }
     image = `static/${req.file.filename}`;
-    if(result.photo != null){
+    if (fs.existsSync(`./${result.photo}`)){
       fs.unlinkSync(`./${result.photo}`);
-    }
+      }
 
     const sql = `UPDATE users SET photo = '${image}' WHERE phone = '${req.body.phone}'`;
     await adb.query(sql);
