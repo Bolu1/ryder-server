@@ -344,7 +344,7 @@ class UserService {
   }
 
   public static async setPassword(body) {
-    const user = await this.getUserByPhone(body.phone);
+    const user = adb.query(`SELECT * FROM users WHERE email = '${body.login}' OR phone = '${body.login}'`);
 
     // if (user.status != 2) {
     //   throw new ForbiddenError();

@@ -32,9 +32,13 @@ class KycService {
     );
 
     const result = await DriverService.getUserByPhone(req.body.phone);
+    // if(!result){
+    //   throw new BadRequestError("Invalid phone number")
+    // }
     if (result.kyc < 1) {
       throw new ForbiddenError("Complete pervious step first");
     }
+    
 
     const slug = generateString(4, true, false);
     //payload to the database
@@ -72,6 +76,7 @@ class KycService {
       dob: req.body.dob,
       address: req.body.address,
       kyc: 1,
+      info_approved: 1
     };
 
     const sql = `UPDATE drivers SET ? WHERE phone = '${req.body.phone}'`;
@@ -99,7 +104,7 @@ class KycService {
     await adb.query(sql);
 
     await adb.query(
-      `UPDATE drivers SET kyc = 6, status = 4 WHERE phone = '${req.body.phone}'`
+      `UPDATE drivers SET kyc = 6, status = 4, photo = '${image}', image_approved = 1 WHERE phone = '${req.body.phone}'`
     );
     return;
   }

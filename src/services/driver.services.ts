@@ -210,7 +210,7 @@ class DriverService {
 
   public static async login(body) {
     const deviceInfo = body.deviceInfo
-    const sql = `SELECT * FROM users WHERE email = '${body.login}' OR phone = '${body.login}'`;
+    const sql = `SELECT * FROM drivers WHERE email = '${body.login}' OR phone = '${body.login}'`;
     const result = await adb.query(sql);
     console.log(result[0][0])
     if(result[0].length < 1){
@@ -319,11 +319,11 @@ class DriverService {
   }
 
   public static async setPassword(body) {
-    const user = await this.getUserByPhone(body.phone);
+    const user = adb.query(`SELECT * FROM drivers WHERE email = '${body.login}' OR phone = '${body.login}'`);
 
-    if (user.status != 2) {
-      throw new ForbiddenError();
-    }
+    // if (user.status != 2) {
+    //   throw new ForbiddenError();
+    // }
 
     const hashedPassword = await bcrypt.hash(body.password, 12);
 
