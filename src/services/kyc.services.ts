@@ -96,8 +96,9 @@ class KycService {
     //   throw new ForbiddenError();
     // }
     image = `static/${req.file.filename}`;
-
+    console.log(fs.existsSync(`./${result.photo}`))
     if (fs.existsSync(`./${result.photo}`)){
+      console.log("here")
       fs.unlinkSync(`./${result.photo}`);
       }
 
