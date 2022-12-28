@@ -86,6 +86,7 @@ class KycService {
   }
 
   public static async setImage(req) {
+    console.log("herw")
     const result = await DriverService.getUserByPhone(req.body.phone);
     var image;
     if (!result) {
@@ -96,11 +97,11 @@ class KycService {
     //   throw new ForbiddenError();
     // }
     image = `static/${req.file.filename}`;
-    console.log(fs.existsSync(`./${result.photo}`))
-    if (fs.existsSync(`./${result.photo}`)){
-      console.log("here")
-      fs.unlinkSync(`./${result.photo}`);
-      }
+    // console.log(fs.existsSync(`./${result.photo}`))
+    // if (fs.existsSync(`./${result.photo}`)){
+    //   console.log("here")
+    //   fs.unlinkSync(`./${result.photo}`);
+    //   }
 
     const sql = `UPDATE drivers SET photo = '${image}' WHERE phone = '${req.body.phone}'`;
     await adb.query(sql);
