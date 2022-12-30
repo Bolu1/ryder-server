@@ -57,6 +57,9 @@ router.get('/users', isAdmin, controller.getUsers)
 
 // notifications
 router.get('/notifications', isAuth, controller.getNotifications)
+router.patch('/update', isAuth, controller.updateDetails)
+router.patch('/updatePassword', isAuth, controller.updatePassword)
+router.delete('/delete', isAuth, controller.deleteUser)
 
 
 

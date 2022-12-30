@@ -47,6 +47,22 @@ router.get('/getKycStatus/:phone',  controller.getKycStatus)
 router.post('/uploadDocument', upload.single("file"), controller.uploadDocument)
 router.post('/drivingHistory', controller.drivingHistory)
 
+// admin routes
+router.get('/getCarDetails/:phone', isAdmin, controller.getCarDetails)
+router.get('/getPersonalInformation/:phone',  isAdmin, controller.getPersonalInformation)
+router.get('/getPaymentDetails/:phone',  isAdmin, controller.getPaymentDetails)
+router.get('/getUploadedDocument/:phone', isAdmin, controller.getUploadedDocument)
+router.get('/getDrivingHistory/:phone', isAdmin, controller.getDrivingHistory)
+
+// admin actions
+router.patch('/editPersonalInformation', isAdmin, controller.editPersonalInformation)
+router.patch('/editCarDetails', isAdmin, controller.editCarDetails)
+router.patch('/photoAction', isAdmin, controller.photoAction)
+router.patch('/paymentDetailsAction', isAdmin, controller.paymentDetailsAction)
+router.patch('/uploadedDocumentsAction', isAdmin, controller.uploadedDocumentsAction)
+router.patch('/drivingHistoryAction', isAdmin, controller.drivingHistoryAction)
+
+
 
 
 module.exports = router

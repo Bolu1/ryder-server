@@ -9,18 +9,19 @@ const auth = async (req, res, next) => {
     let decoded = Jwt.verify(token);
 
     res.locals.user = {
-      name: decoded.name,
-      organizationId: decoded.organizationId ? decoded.organizationId : decoded.id,
       email: decoded.email,
       id: decoded.id,
-      type: decoded.type
+      role: decoded.role?decoded.role: null
     };
 
 
     next();
   } catch (err) {
     console.log(err);
-    return res.status(403).json({ error: err });
+    return res.status(403).json({
+      status:false,
+      message: "Unauthorized"
+    });
   }
 };
 

@@ -1,28 +1,34 @@
-import express from "express"
+const express = require("express");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
+import Jwt from "../core/Jwt";
 
 const auth = async (req, res, next) => {
   try {
     const token = req.headers.authorization.split(" ")[1]
-    // const token = req.body.token;
+    let decoded = Jwt.verify(token);
 
-    let decoded = jwt.verify(token, process.env.SECERET_KEY);
-    if(!decoded.isAdmin){
-        return res.status(403).send("Unauthorized")
+    if(decoded.role == null){
+      return res.status(403).json({
+        status:false,
+        message: "Unauthorized"
+      });
     }
 
     res.locals.user = {
       email: decoded.email,
       id: decoded.id,
-      isAdmin: true
+      role: decoded.role?decoded.role: null
     };
-    const main = decoded.email;
+
 
     next();
   } catch (err) {
     console.log(err);
-    return res.status(403).send("Unauthorized");
+    return res.status(403).json({
+      status:false,
+      message: "Unauthorized"
+    });
   }
 };
 

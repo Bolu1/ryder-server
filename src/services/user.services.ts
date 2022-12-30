@@ -409,6 +409,43 @@ class UserService {
   }
 
 
+  public static async updateDetails(req, user) {
+    const result = await this.getUserByEmail(user.email);
+
+    const payload = {
+      first_name: req.body.firstname  ? req.body.firstname : result[0].firstname,
+      last_name: req.body.lastname ? req.body.lastname : result[0].lastname
+
+    };
+
+    const sql = `UPDATE users SET ? WHERE slug= '${user.id}'`;
+    await adb.query(sql, payload);
+    return;
+  }
+
+
+  public static async updatePassword(req, user) {
+    const result = await this.getUserByEmail(user.email);
+    console.log(req.body.currentPassword)
+
+    const valid = await bcrypt.compare(req.body.currentPassword, result.password);
+    if (!valid) {
+      throw new BadRequestError("Password is Invalid");
+    }
+
+    const hashedPassword = await bcrypt.hash(req.body.password, 12);
+    const sql = `UPDATE users SET password = '${hashedPassword}' WHERE slug = '${user.id}'`;
+    await adb.query(sql);
+    return;
+  }
+
+  public static async deleteUser(req, user) {
+
+    const sql = `DELETE FROM users WHERE slug = '${user.id}'`;
+    await adb.query(sql);
+    return;
+  }
+
 }
 
 export default UserService;

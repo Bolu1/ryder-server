@@ -4,7 +4,7 @@ const isAuth = require('../../middleware/isAuth')
 
 const router = express()
 
-router.get('/new', isAuth, controller.newTrip)
+router.get('/new', controller.newTrip)
 
 
 module.exports = router

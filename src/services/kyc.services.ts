@@ -233,9 +233,149 @@ class KycService {
     await adb.query(
       `UPDATE drivers SET kyc = 4 WHERE phone = '${body.phone}'`
     );
+  }
 
 
+  public static async getCarDetails(req) {
 
+
+    const sql = `SELECT * FROM car_details WHERE driver_phone = '${req.params.phone}'`;
+    const result = await adb.query(sql);
+    const car = await adb.query(`SELECT image_url FROM car_images WHERE driver_phone = '${req.params.phone}'`);
+
+
+    return {
+      details: result[0][0],
+      images: car[0]
+    }
+  }
+
+  public static async getPersonalInformation(req) {
+
+    const sql = `SELECT slug, first_name, last_name, email, phone, photo, gender, nationality, city, address, dob FROM drivers WHERE phone = '${req.params.phone}'`;
+    const result = await adb.query(sql);
+
+    return result[0][0]
+  }
+
+  public static async getPaymentDetails(req) {
+
+    const sql = `SELECT * FROM payment_details WHERE driver_phone = '${req.params.phone}'`;
+    const result = await adb.query(sql);
+
+    return result[0][0]
+  }
+
+  public static async getUploadedDocument(req) {
+
+    const sql = `SELECT * FROM driver_documents WHERE driver_phone = '${req.params.phone}'`;
+    const result = await adb.query(sql);
+
+    return result[0]
+  }
+
+  public static async getDrivingHistory(req) {
+
+    const sql = `SELECT * FROM driving_history WHERE driver_phone = '${req.params.phone}'`;
+    const result = await adb.query(sql);
+
+    return result[0][0]
+  }
+
+
+  public static async editPersonalInformation(req) {
+
+    if(req.body.status != 2 && req.body.status != 3){
+
+      throw new BadRequestError("Invalid input")
+    }
+
+    const status = req.body.status == 2 ? 2 : 3
+
+    const sql = `UPDATE drivers SET info_approved = ${status} WHERE phone = '${req.body.phone}'`;
+    await adb.query(sql);
+
+    return
+  }
+
+
+  public static async editCarDetails(req) {
+
+    if(req.body.status != 2 && req.body.status != 3){
+
+      throw new BadRequestError("Invalid input")
+    }
+
+    const status = req.body.status == 2 ? 2 : 3
+
+    const sql = `UPDATE car_details SET status = ${status} WHERE driver_phone = '${req.body.phone}'`;
+    await adb.query(sql);
+
+    return 
+  }
+
+
+  public static async photoAction(req) {
+
+    if(req.body.status != 2 && req.body.status != 3){
+
+      throw new BadRequestError("Invalid input")
+    }
+
+    const status = req.body.status == 2 ? 2 : 3
+
+    const sql = `UPDATE drivers SET image_approved = ${status} WHERE phone = '${req.body.phone}'`;
+    await adb.query(sql);
+
+    return 
+  }
+
+
+  public static async paymentDetailsAction(req) {
+
+    if(req.body.status != 2 && req.body.status != 3){
+
+      throw new BadRequestError("Invalid input")
+    }
+
+    const status = req.body.status == 2 ? 2 : 3
+
+    const sql = `UPDATE payment_details SET status = ${status} WHERE driver_phone = '${req.body.phone}'`;
+    await adb.query(sql);
+
+    return 
+  }
+
+
+  public static async uploadedDocumentsAction(req) {
+
+    if(req.body.status != 2 && req.body.status != 3){
+
+      throw new BadRequestError("Invalid input")
+    }
+
+    const status = req.body.status == 2 ? 2 : 3
+
+    const sql = `UPDATE driver_documents SET status = ${status} WHERE driver_phone = '${req.body.phone}'`;
+    await adb.query(sql);
+
+    return 
+  }
+
+
+  public static async drivingHistoryAction(req) {
+
+    if(req.body.status != 2 && req.body.status != 3){
+
+      throw new BadRequestError("Invalid input")
+    }
+
+    const status = req.body.status == 2 ? 2 : 3
+
+    const sql = `UPDATE driving_history SET status = ${status} WHERE driver_phone = '${req.body.phone}'`;
+    await adb.query(sql);
+
+    return 
   }
 }
 

@@ -30,4 +30,3 @@ exports.newTrip = asyncHandler(
     return new CreatedResponse("Success", []).send(res);
   }
 );
-

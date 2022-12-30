@@ -137,3 +137,24 @@ exports.getNotifications = asyncHandler(
     return new SuccessResponse("Success", result).send(res);
   }
 );
+
+exports.updateDetails = asyncHandler(
+  async (req: Request, res: Response) => {
+    await DriverService.updateDetails(req, res.locals.user);
+    return new SuccessResponse("Success", []).send(res);
+  }
+);
+
+exports.updatePassword = asyncHandler(
+  async (req: Request, res: Response) => {
+    await DriverService.updatePassword(req, res.locals.user);
+    return new SuccessResponse("Success", []).send(res);
+  }
+);
+
+exports.deleteDriver = asyncHandler(
+  async (req: Request, res: Response) => {
+    await DriverService.deleteDriver(req, res.locals.user);
+    return new SuccessResponse("Success", []).send(res);
+  }
+);

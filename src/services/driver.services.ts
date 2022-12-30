@@ -62,6 +62,9 @@ class DriverService {
       if (result.status == 3) {
         throw new BadRequestError("Incomplete registration, complete your KYC");
       }
+      if (result.status == 4) {
+        throw new BadRequestError("Incomplete registration, KYC not yet approved");
+      }
       else {
         throw new ConflictError("Phone number already in use");
       }
@@ -228,6 +231,9 @@ class DriverService {
     if(result[0][0].status == 3){
       throw new BadRequestError("Incomplete registration, please complete your KYC");
     }
+    if (result.status == 4) {
+      throw new BadRequestError("Incomplete registration, KYC not yet approved");
+    }
     if (result[0][0].password == null) {
       throw new BadRequestError("Incomplete registration, please set a password");
     }
@@ -382,6 +388,45 @@ class DriverService {
     const sql = `SELECT * FROM notifications WHERE user_id = '${user.id}' ORDER BY id DESC LIMIT 20 OFFSET ${skip}`;
     const result = await adb.query(sql);
     return result[0];
+  }
+
+
+  public static async updateDetails(req, user) {
+    const result = await this.getUserByEmail(user.email);
+
+    const payload = {
+      first_name: req.body.firstname  ? req.body.firstname : result[0].firstname,
+      last_name: req.body.lastname ? req.body.lastname : result[0].lastname
+
+    };
+
+    const sql = `UPDATE drivers SET ? WHERE slug= '${user.id}'`;
+    await adb.query(sql, payload);
+    return;
+  }
+
+
+  public static async updatePassword(req, user) {
+    const result = await this.getUserByEmail(user.email);
+    console.log(req.body.currentPassword)
+
+    const valid = await bcrypt.compare(req.body.currentPassword, result.password);
+    if (!valid) {
+      throw new BadRequestError("Password is Invalid");
+    }
+
+    const hashedPassword = await bcrypt.hash(req.body.password, 12);
+    const sql = `UPDATE drivers SET password = '${hashedPassword}' WHERE slug = '${user.id}'`;
+    await adb.query(sql);
+    return;
+  }
+
+
+  public static async deleteDriver(req, user) {
+
+    const sql = `DELETE FROM users WHERE slug = '${user.id}'`;
+    await adb.query(sql);
+    return;
   }
 
 }
