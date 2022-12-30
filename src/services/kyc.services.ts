@@ -377,6 +377,16 @@ class KycService {
 
     return 
   }
+
+
+  public static async approveUser(req) {
+
+
+    const sql = `UPDATE drivers SET status = 5 WHERE phone = '${req.body.phone}'`;
+    await adb.query(sql);
+
+    return 
+  }
 }
 
 export default KycService;

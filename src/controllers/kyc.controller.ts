@@ -107,3 +107,8 @@ exports.drivingHistoryAction = asyncHandler(async (req: Request, res: Response) 
   await KycService.drivingHistoryAction(req);
   return new SuccessResponse("Success", []).send(res);
 });
+
+exports.approveUser = asyncHandler(async (req: Request, res: Response) => {
+  await KycService.approveUser(req);
+  return new SuccessResponse("Success", []).send(res);
+});

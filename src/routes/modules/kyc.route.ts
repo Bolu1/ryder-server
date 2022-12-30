@@ -61,6 +61,7 @@ router.patch('/photoAction', isAdmin, controller.photoAction)
 router.patch('/paymentDetailsAction', isAdmin, controller.paymentDetailsAction)
 router.patch('/uploadedDocumentsAction', isAdmin, controller.uploadedDocumentsAction)
 router.patch('/drivingHistoryAction', isAdmin, controller.drivingHistoryAction)
+router.patch('/approveUser', isAdmin, controller.approveUser)
 
 
 
