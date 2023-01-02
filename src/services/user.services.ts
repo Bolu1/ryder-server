@@ -446,6 +446,44 @@ class UserService {
     return;
   }
 
+  public static async addFavoriteLocation(req, user) {
+    //payload to the database
+    const slug = generateString(4, true, false);
+    //payload to the database
+    const payload = {
+      user_id: user.id,
+      slug: slug,
+      address: req.body.address,
+      icon: req.file.path,
+      name: req.body.name,
+      longitude: req.body.longitude,
+      latitude: req.body.latitude
+
+    };
+
+    const sql = `INSERT INTO favourite_locations SET ?`;
+    await adb.query(sql, payload);
+    return;
+  }
+
+  public static async deleteFavoriteLocation(req, user) {
+
+    const sql = `DELETE FROM favourite_locations WHERE slug = '${req.params.id}' AND user_id = '${user.id}'`;
+
+    await adb.query(sql);
+    return;
+  }
+
+
+  public static async getFavoriteLocation(req, user) {
+
+    const result = await adb.query(`SELECT * FROM favourite_locations WHERE user_id = '${user.id}'`);
+    console.log(result[0])
+    return result[0];
+  }
+
+
+
 }
 
 export default UserService;

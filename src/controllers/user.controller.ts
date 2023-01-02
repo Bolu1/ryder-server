@@ -142,13 +142,6 @@ exports.updateDetails = asyncHandler(
 );
 
 
-exports.updatePassword = asyncHandler(
-  async (req: Request, res: Response) => {
-    await UserService.updatePassword(req, res.locals.user);
-    return new SuccessResponse("Success", []).send(res);
-  }
-);
-
 exports.deleteUser = asyncHandler(
   async (req: Request, res: Response) => {
     await UserService.deleteUser(req, res.locals.user);
@@ -156,3 +149,32 @@ exports.deleteUser = asyncHandler(
   }
 );
 
+exports.updatePassword = asyncHandler(
+  async (req: Request, res: Response) => {
+    await UserService.updatePassword(req, res.locals.user);
+    return new SuccessResponse("Success", []).send(res);
+  }
+);
+
+exports.addFavoriteLocation = asyncHandler(
+  async (req: Request, res: Response) => {
+    await UserService.addFavoriteLocation(req, res.locals.user);
+    return new CreatedResponse("Success", []).send(res);
+  }
+);
+
+
+exports.getFavoriteLocation = asyncHandler(
+  async (req: Request, res: Response) => {
+    const result = await UserService.getFavoriteLocation(req, res.locals.user);
+    return new SuccessResponse("Success", result).send(res);
+  }
+);
+
+
+exports.deleteFavoriteLocation = asyncHandler(
+  async (req: Request, res: Response) => {
+    await UserService.deleteFavoriteLocation(req, res.locals.user);
+    return new SuccessResponse("Success", []).send(res);
+  }
+);

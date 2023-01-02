@@ -61,6 +61,11 @@ router.patch('/update', isAuth, controller.updateDetails)
 router.patch('/updatePassword', isAuth, controller.updatePassword)
 router.delete('/delete', isAuth, controller.deleteUser)
 
+// favorite locations
+router.post('/favoriteLocation/add', isAuth, upload.single("image"), controller.addFavoriteLocation)
+router.get('/favoriteLocation/get', isAuth, controller.getFavoriteLocation)
+router.delete('/favoriteLocation/delete/:id', isAuth, controller.deleteFavoriteLocation)
+
 
 
 module.exports = router
