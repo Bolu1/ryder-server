@@ -178,3 +178,24 @@ exports.deleteFavoriteLocation = asyncHandler(
     return new SuccessResponse("Success", []).send(res);
   }
 );
+
+exports.emergencyContacts = asyncHandler(
+  async (req: Request, res: Response) => {
+    await UserService.emergencyContacts(req, res.locals.user);
+    return new CreatedResponse("Success", []).send(res);
+  }
+);
+
+exports.getEmergencyContacts = asyncHandler(
+  async (req: Request, res: Response) => {
+    const result = await UserService.getEmergencyContacts(req, res.locals.user);
+    return new SuccessResponse("Success", result).send(res);
+  }
+);
+
+exports.deleteEmergencyContacts = asyncHandler(
+  async (req: Request, res: Response) => {
+    await UserService.deleteEmergencyContacts(req, res.locals.user);
+    return new SuccessResponse("Success", []).send(res);
+  }
+);

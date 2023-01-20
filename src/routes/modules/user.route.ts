@@ -66,6 +66,10 @@ router.post('/favoriteLocation/add', isAuth, upload.single("image"), controller.
 router.get('/favoriteLocation/get', isAuth, controller.getFavoriteLocation)
 router.delete('/favoriteLocation/delete/:id', isAuth, controller.deleteFavoriteLocation)
 
+// emergency contacts
+router.post('/emergencyContacts', isAuth, controller.emergencyContacts)
+router.get('/emergencyContacts', isAuth, controller.getEmergencyContacts)
+router.delete('/emergencyContacts/:id', isAuth, controller.deleteEmergencyContacts)
 
 
 module.exports = router

@@ -474,7 +474,6 @@ class UserService {
     return;
   }
 
-
   public static async getFavoriteLocation(req, user) {
 
     const result = await adb.query(`SELECT * FROM favourite_locations WHERE user_id = '${user.id}'`);
@@ -483,6 +482,38 @@ class UserService {
   }
 
 
+  public static async emergencyContacts(req, user) {
+    //payload to the database
+    const slug = generateString(4, true, false);
+    //payload to the database
+    const payload = {
+      user_id: user.id,
+      slug: slug,
+      name: req.body.name,
+      phone: req.body.phone
+
+    };
+
+    const sql = `INSERT INTO emergency_contacts SET ?`;
+    await adb.query(sql, payload);
+    return;
+  }
+
+
+  public static async getEmergencyContacts(req, user) {
+
+    const result = await adb.query(`SELECT * FROM emergency_contacts WHERE user_id = '${user.id}'`);
+    console.log(result[0])
+    return result[0];
+  }
+
+  public static async deleteEmergencyContacts(req, user) {
+
+    const sql = `DELETE FROM emergency_contacts WHERE slug = '${req.params.id}' AND user_id = '${user.id}'`;
+
+    await adb.query(sql);
+    return;
+  }
 
 }
 
