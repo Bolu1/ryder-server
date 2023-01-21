@@ -25,6 +25,10 @@ import DriverService from "./driver.services";
 
 const adb = ndb.promise();
 
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+});
+
 class UserService {
   public static async addUser(body) {
     const { gender, nationality, phone, firstName, lastName } = body;
@@ -536,10 +540,6 @@ class UserService {
 
   public static async pushOne(req) {
 
-    admin.initializeApp({
-      credential: admin.credential.cert(serviceAccount),
-    });
-
     // Get the FCM token for the target device
     const firebaseToken =
       req.body.token? req.body.token : "ehMlqNRjT9mYJpCz9tpAk9:APA91bE4eOUrcuSZKYNBW2JJiQm6mfKMpucbqFUTCUdJ9D8QhEuxXCIrUMiyj9bbYLim5ko3aPb11g-sIbWE3l5R0pGf7WQNUNzSEiQHTrsJuL3lAeg-SwJvEihoAyQ0mdnF1dGLa4bG";
@@ -571,9 +571,6 @@ class UserService {
 
   public static async pushMany(req) {
 
-    admin.initializeApp({
-      credential: admin.credential.cert(serviceAccount),
-    });
 
     // Get the FCM tokens for the target devices
     const firebaseTokens = [
