@@ -71,5 +71,9 @@ router.post('/emergencyContacts', isAuth, controller.emergencyContacts)
 router.get('/emergencyContacts', isAuth, controller.getEmergencyContacts)
 router.delete('/emergencyContacts/:id', isAuth, controller.deleteEmergencyContacts)
 
+// push notification
+router.post("/pushOne", controller.pushOne)
+router.post("/pushMany", controller.pushMany)
+
 
 module.exports = router

@@ -6,6 +6,7 @@ const admin = require('./modules/admin.route')
 const trip = require('./modules/trip.route')
 const complaint = require('./modules/complaint.route')
 const payment = require('./modules/payment.route')
+const wallet = require('./modules/wallet.route')
 
 const routes = express()
 
@@ -16,6 +17,7 @@ routes.use('/trip', trip)
 routes.use('/complaint', complaint)
 routes.use('/admin', admin)
 routes.use('/payment', payment)
+routes.use('/wallet', wallet)
 
 
 module.exports = routes

@@ -1,6 +1,7 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const transporter = require("../utils/mailer");
+import WalletService from "../services/wallet.services";
 const { sendSms } = require("../utils/utils");
 import { generateString } from "../helpers/constants";
 const sharp = require("sharp");
@@ -69,6 +70,9 @@ class DriverService {
         throw new ConflictError("Phone number already in use");
       }
     }
+
+    await WalletService.createWallet(slug)
+
     const sql = `INSERT INTO drivers SET ?`;
     const response = await adb.query(sql, payload);
     // send otp verification

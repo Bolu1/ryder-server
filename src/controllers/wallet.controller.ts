@@ -1,6 +1,6 @@
 import express, { Request, Response } from "express";
 import asyncHandler from "../middleware/async";
-import TripsService from "../services/trip.services";
+import WalletService from "../services/wallet.services";
 const { validateParameters } = require("../utils/validateParameters");
 import {
   BadRequestDataResponse,
@@ -9,24 +9,10 @@ import {
 } from "../core/ApiResponse";
 import { BadRequestError } from "../core/ApiError";
 
-exports.newTrip = asyncHandler(
+exports.getBalance = asyncHandler(
   async (req: Request, res: Response) => {
-    // validator
-    const { isValid, messages } = validateParameters(
-      [
-        "startLocation",
-        "startCoordinate",
-        "endCoordinate",
-        "endLocation",
-      ],
-      req.body
-    );
 
-    if (isValid) {
-      throw new BadRequestError();
-    }
-
-    await TripsService.newTrip(req.body);
+    await WalletService.getBalance(res.locals.user);
     return new CreatedResponse("Success", []).send(res);
   }
 );

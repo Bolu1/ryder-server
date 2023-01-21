@@ -199,3 +199,17 @@ exports.deleteEmergencyContacts = asyncHandler(
     return new SuccessResponse("Success", []).send(res);
   }
 );
+
+exports.pushOne = asyncHandler(
+  async (req: Request, res: Response) => {
+    const result = await UserService.pushOne(req);
+    return new SuccessResponse("Success", result).send(res);
+  }
+);
+
+exports.pushMany = asyncHandler(
+  async (req: Request, res: Response) => {
+    const result = await UserService.pushMany(req);
+    return new SuccessResponse("Success", result).send(res);
+  }
+);

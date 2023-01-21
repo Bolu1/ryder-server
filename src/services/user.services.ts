@@ -1,7 +1,10 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const transporter = require("../utils/mailer");
+import WalletService from "../services/wallet.services";
 const { sendSms } = require("../utils/utils");
+const admin = require("firebase-admin");
+const serviceAccount = require("../../firebasestuff.json");
 import { generateString } from "../helpers/constants";
 import randomString from "../utils/randomString";
 import {
@@ -46,17 +49,24 @@ class UserService {
 
         const sql1 = `DELETE FROM users WHERE phone = '${phone}'`;
         await adb.query(sql1);
-        return
+        return;
       }
       if (result.status == 1) {
-        throw new BadRequestError("Incomplete registration, please set an email");
+        throw new BadRequestError(
+          "Incomplete registration, please set an email"
+        );
       }
       if (result.status == 2) {
-        throw new BadRequestError("Incomplete registration, please set a password");
+        throw new BadRequestError(
+          "Incomplete registration, please set a password"
+        );
       } else {
         throw new ConflictError("Phone number already in use");
       }
     }
+
+    await WalletService.createWallet(slug);
+
     const sql = `INSERT INTO users SET ?`;
     const response = await adb.query(sql, payload);
     // send otp verification
@@ -72,9 +82,9 @@ class UserService {
       throw new BadRequestError("Empty otp details are not allowed");
     }
 
-    if(body.otp == "123456"){
+    if (body.otp == "123456") {
       await adb.query(`UPDATE users SET status = 2 WHERE phone = '${phone}'`);
-      return
+      return;
     }
 
     const sql = `SELECT * FROM otps WHERE phone = ${phone}`;
@@ -108,10 +118,9 @@ class UserService {
       throw new BadRequestError("Empty otp details are not allowed");
     }
 
-
-    if(body.otp == "123456"){
+    if (body.otp == "123456") {
       await adb.query(`UPDATE users SET status = 1 WHERE phone = '${phone}'`);
-      return
+      return;
     }
 
     const sql = `SELECT * FROM otps WHERE phone = ${phone}`;
@@ -145,12 +154,12 @@ class UserService {
       throw new BadRequestError("Empty otp details are not allowed");
     }
 
-    if(body.otp == "123456"){
+    if (body.otp == "123456") {
       const hashedPassword = await bcrypt.hash(password, 12);
       await adb.query(
         `UPDATE users SET password = '${hashedPassword}' WHERE phone = '${phone}'`
       );
-        return
+      return;
     }
 
     const sql = `SELECT * FROM otps WHERE phone = ${phone}`;
@@ -209,24 +218,30 @@ class UserService {
   }
 
   public static async login(body) {
-    const deviceInfo = body.deviceInfo
+    const deviceInfo = body.deviceInfo;
     const sql = `SELECT * FROM users WHERE email = '${body.login}' OR phone = '${body.login}'`;
     const result = await adb.query(sql);
-    console.log(result[0][0])
-    if(result[0].length < 1){
+    console.log(result[0][0]);
+    if (result[0].length < 1) {
       throw new BadRequestError("Invalid login details");
     }
-    if(result[0][0].status == 0){
-      throw new BadRequestError("Incomplete registration, please verify your phone number");
+    if (result[0][0].status == 0) {
+      throw new BadRequestError(
+        "Incomplete registration, please verify your phone number"
+      );
     }
-    if(result[0][0].status == 1){
+    if (result[0][0].status == 1) {
       throw new BadRequestError("Incomplete registration, please set an email");
     }
-    if(result[0][0].status == 2){
-      throw new BadRequestError("Incomplete registration, please set a password");
+    if (result[0][0].status == 2) {
+      throw new BadRequestError(
+        "Incomplete registration, please set a password"
+      );
     }
     if (result[0][0].password == null) {
-      throw new BadRequestError("Incomplete registration, please set a password");
+      throw new BadRequestError(
+        "Incomplete registration, please set a password"
+      );
     }
 
     const valid = await bcrypt.compare(body.password, result[0][0].password);
@@ -252,10 +267,11 @@ class UserService {
       type: deviceInfo.type,
     };
 
-    await adb.query(`DELETE FROM devices WHERE user_id = '${result[0][0].slug}'`);
+    await adb.query(
+      `DELETE FROM devices WHERE user_id = '${result[0][0].slug}'`
+    );
     const sql1 = `INSERT INTO devices SET ?`;
     await adb.query(sql1, payload);
-
 
     return {
       token: authToken,
@@ -265,8 +281,8 @@ class UserService {
       firstName: result[0][0].first_name,
       lastName: result[0][0].last_name,
       gender: result[0][0].gender,
-      photo: "https://ryder-server.onrender.com/"+result[0][0].photo,
-      country: result[0][0].nationality
+      photo: "https://ryder-server.onrender.com/" + result[0][0].photo,
+      country: result[0][0].nationality,
     };
   }
 
@@ -344,7 +360,9 @@ class UserService {
   }
 
   public static async setPassword(body) {
-    const user = adb.query(`SELECT * FROM users WHERE email = '${body.login}' OR phone = '${body.login}'`);
+    const user = adb.query(
+      `SELECT * FROM users WHERE email = '${body.login}' OR phone = '${body.login}'`
+    );
 
     // if (user.status != 2) {
     //   throw new ForbiddenError();
@@ -358,15 +376,14 @@ class UserService {
   }
 
   public static async setEmail(body) {
-    
     const user = await this.getUserByPhone(body.phone);
 
     // if (user.status != 1) {
     //   throw new ForbiddenError();
     // }
 
-    const result = await this.getUserByEmail(body.email)
-    if(result){
+    const result = await this.getUserByEmail(body.email);
+    if (result) {
       throw new ConflictError("Email already in use");
     }
 
@@ -378,23 +395,23 @@ class UserService {
 
   public static async sendSmsOTP(body) {
     const otp = `${Math.floor(100000 + Math.random() * 900000)}`;
-    console.log(otp)
+    console.log(otp);
   }
 
   public static async setImage(req) {
     const result = await this.getUserByPhone(req.body.phone);
     var image;
-    if(!result){
-      throw new BadRequestError("Image change not successful")
+    if (!result) {
+      throw new BadRequestError("Image change not successful");
     }
-   
+
     // if (result.status != 3) {
     //   throw new ForbiddenError();
     // }
     image = `static/${req.file.filename}`;
-    if (fs.existsSync(`./${result.photo}`)){
+    if (fs.existsSync(`./${result.photo}`)) {
       fs.unlinkSync(`./${result.photo}`);
-      }
+    }
 
     const sql = `UPDATE users SET photo = '${image}' WHERE phone = '${req.body.phone}'`;
     await adb.query(sql);
@@ -408,14 +425,12 @@ class UserService {
     return result[0];
   }
 
-
   public static async updateDetails(req, user) {
     const result = await this.getUserByEmail(user.email);
 
     const payload = {
-      first_name: req.body.firstname  ? req.body.firstname : result[0].firstname,
-      last_name: req.body.lastname ? req.body.lastname : result[0].lastname
-
+      first_name: req.body.firstname ? req.body.firstname : result[0].firstname,
+      last_name: req.body.lastname ? req.body.lastname : result[0].lastname,
     };
 
     const sql = `UPDATE users SET ? WHERE slug= '${user.id}'`;
@@ -423,12 +438,14 @@ class UserService {
     return;
   }
 
-
   public static async updatePassword(req, user) {
     const result = await this.getUserByEmail(user.email);
-    console.log(req.body.currentPassword)
+    console.log(req.body.currentPassword);
 
-    const valid = await bcrypt.compare(req.body.currentPassword, result.password);
+    const valid = await bcrypt.compare(
+      req.body.currentPassword,
+      result.password
+    );
     if (!valid) {
       throw new BadRequestError("Password is Invalid");
     }
@@ -440,7 +457,6 @@ class UserService {
   }
 
   public static async deleteUser(req, user) {
-
     const sql = `DELETE FROM users WHERE slug = '${user.id}'`;
     await adb.query(sql);
     return;
@@ -457,8 +473,7 @@ class UserService {
       icon: req.file.path,
       name: req.body.name,
       longitude: req.body.longitude,
-      latitude: req.body.latitude
-
+      latitude: req.body.latitude,
     };
 
     const sql = `INSERT INTO favourite_locations SET ?`;
@@ -467,7 +482,6 @@ class UserService {
   }
 
   public static async deleteFavoriteLocation(req, user) {
-
     const sql = `DELETE FROM favourite_locations WHERE slug = '${req.params.id}' AND user_id = '${user.id}'`;
 
     await adb.query(sql);
@@ -475,12 +489,12 @@ class UserService {
   }
 
   public static async getFavoriteLocation(req, user) {
-
-    const result = await adb.query(`SELECT * FROM favourite_locations WHERE user_id = '${user.id}'`);
-    console.log(result[0])
+    const result = await adb.query(
+      `SELECT * FROM favourite_locations WHERE user_id = '${user.id}'`
+    );
+    console.log(result[0]);
     return result[0];
   }
-
 
   public static async emergencyContacts(req, user) {
     //payload to the database
@@ -490,8 +504,7 @@ class UserService {
       user_id: user.id,
       slug: slug,
       name: req.body.name,
-      phone: req.body.phone
-
+      phone: req.body.phone,
     };
 
     const sql = `INSERT INTO emergency_contacts SET ?`;
@@ -499,22 +512,97 @@ class UserService {
     return;
   }
 
-
   public static async getEmergencyContacts(req, user) {
-
-    const result = await adb.query(`SELECT * FROM emergency_contacts WHERE user_id = '${user.id}'`);
-    console.log(result[0])
+    const result = await adb.query(
+      `SELECT * FROM emergency_contacts WHERE user_id = '${user.id}'`
+    );
+    console.log(result[0]);
     return result[0];
   }
 
   public static async deleteEmergencyContacts(req, user) {
-
     const sql = `DELETE FROM emergency_contacts WHERE slug = '${req.params.id}' AND user_id = '${user.id}'`;
 
     await adb.query(sql);
     return;
   }
 
+
+
+
+
+
+
+
+  public static async pushOne(req) {
+
+    admin.initializeApp({
+      credential: admin.credential.cert(serviceAccount),
+    });
+
+    // Get the FCM token for the target device
+    const firebaseToken =
+      req.body.token? req.body.token : "ehMlqNRjT9mYJpCz9tpAk9:APA91bE4eOUrcuSZKYNBW2JJiQm6mfKMpucbqFUTCUdJ9D8QhEuxXCIrUMiyj9bbYLim5ko3aPb11g-sIbWE3l5R0pGf7WQNUNzSEiQHTrsJuL3lAeg-SwJvEihoAyQ0mdnF1dGLa4bG";
+
+    // Create the notification payload
+    const payload = {
+      notification: {
+        title: "Notification Title",
+        body: "Ya big man BIG MAN",
+      },
+      data: {
+        // Additional data goes here
+      },
+    };
+
+    // Send the notification to the target device
+    admin
+      .messaging()
+      .sendToDevice(firebaseToken, payload)
+      .then((response) => {
+        console.log("Notification sent successfully:", response);
+      })
+      .catch((error) => {
+        console.log("Error sending notification:", error);
+      });
+  }
+
+
+
+  public static async pushMany(req) {
+
+    admin.initializeApp({
+      credential: admin.credential.cert(serviceAccount),
+    });
+
+    // Get the FCM tokens for the target devices
+    const firebaseTokens = [
+      "cXqN7dghSGaCIWT_CM4jZx:APA91bFTsLPwe8eEz4GnAtf6sLJaFBzxN8M0PEOtqm9qEZxDTT-IA9woaz0CrraEu4mC2gl0j4iq_QVJ94eezDKDSfEQ_N_oFXMKawRot16LbB4WRX-BWkT4XPNK3Y8MTK5ysDGK9mDq",
+      "ehMlqNRjT9mYJpCz9tpAk9:APA91bE4eOUrcuSZKYNBW2JJiQm6mfKMpucbqFUTCUdJ9D8QhEuxXCIrUMiyj9bbYLim5ko3aPb11g-sIbWE3l5R0pGf7WQNUNzSEiQHTrsJuL3lAeg-SwJvEihoAyQ0mdnF1dGLa4bG",
+    ];
+
+    // Create the notification payload
+    const payload = {
+      notification: {
+        title: "Notification Title",
+        body: "This is an example notification",
+      },
+      data: {
+        // Additional data goes here
+      },
+    };
+
+    // Send the notification to the target devices
+    admin
+      .messaging()
+      .sendToDevice(firebaseTokens, payload)
+      .then((response) => {
+        console.log("Notification sent successfully:", response);
+      })
+      .catch((error) => {
+        console.log("Error sending notification:", error);
+      });
+  }
 }
 
 export default UserService;
