@@ -425,12 +425,34 @@ class DriverService {
     return;
   }
 
-
   public static async deleteDriver(req, user) {
 
     const sql = `DELETE FROM users WHERE slug = '${user.id}'`;
     await adb.query(sql);
     return;
+  }
+
+  public static async createWithdrawalRequest(req, user) {
+
+    // check if an unapprove withdrawal request exists if it doest delete it and add new
+    await adb.query(`DELETE FROM withdrawal_requests WHERE user_id = '${user.id}' AND approved = 0`)
+
+    // check driver's current balance
+    const balance = await WalletService.getBalance(user.id)
+    console.log(balance)
+    if(balance < req.body.amount){
+      throw new BadRequestError("Insufficient Balance")
+    }
+
+    const slug = generateString(4, true, false);
+    //payload to the database
+    const payload = {
+      amount: req.body.amount,
+      slug: slug,
+    };
+
+    const sql = `INSERT INTO wallet_request SET ?`;
+    const response = await adb.query(sql, payload);
   }
 
 }

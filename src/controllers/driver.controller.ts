@@ -158,3 +158,10 @@ exports.deleteDriver = asyncHandler(
     return new SuccessResponse("Success", []).send(res);
   }
 );
+
+exports.createWithdrawalRequest = asyncHandler(
+  async (req: Request, res: Response) => {
+    await DriverService.createWithdrawalRequest(req, res.locals.user);
+    return new SuccessResponse("Success", []).send(res);
+  }
+);

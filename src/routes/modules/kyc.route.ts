@@ -19,13 +19,13 @@ const upload = multer({
   storage: storage,
   limits:{fileSize: 10000000},
   fileFilter: function(req, file, cb){
-    // checkFileType(file, cb)
+    checkFileType(file, cb)
   }
 })
 
 const checkFileType = (file, cb) =>{
 
-  const filetypes = /jpeg|jpg|png|pdf/
+  const filetypes = /jpeg|jpg|png|pdf|svg/
   const extname = filetypes.test(path.extname(file.originalname).toLowerCase())
   const mimetype = filetypes.test(file.mimetype)
 

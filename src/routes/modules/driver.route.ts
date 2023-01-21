@@ -19,13 +19,13 @@ const upload = multer({
   storage: storage,
   limits:{fileSize: 10000000},
   fileFilter: function(req, file, cb){
-    // checkFileType(file, cb)
+    checkFileType(file, cb)
   }
 })
 
 const checkFileType = (file, cb) =>{
 
-  const filetypes = /jpeg|jpg|png/
+  const filetypes = /jpeg|jpg|png|svg/
   const extname = filetypes.test(path.extname(file.originalname).toLowerCase())
   const mimetype = filetypes.test(file.mimetype)
 
@@ -61,6 +61,9 @@ router.get('/notifications', isAuth, controller.getNotifications)
 router.patch('/update', isAuth, controller.updateDetails)
 router.patch('/updatePassword', isAuth, controller.updatePassword)
 router.delete('/delete', isAuth, controller.deleteDriver)
+
+// withdrawal request
+router.post('/withdrawal/request', isAuth, controller.createWithdrawalRequest)
 
 
 module.exports = router
