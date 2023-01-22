@@ -11,7 +11,8 @@ const auth = async (req, res, next) => {
     res.locals.user = {
       email: decoded.email,
       id: decoded.id,
-      role: decoded.role?decoded.role: null
+      role: decoded.role?decoded.role: null,
+      phone: decoded.phone
     };
 
 

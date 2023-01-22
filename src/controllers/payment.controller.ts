@@ -19,6 +19,7 @@ exports.initPaystack = asyncHandler(
 exports.verifyPaystack = asyncHandler(
   async (req: Request, res: Response) => {
 
-    await PaymentService.verifyPayment(req);
+    await PaymentService.verifyPayment(req, res);
+
   }
 )

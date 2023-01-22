@@ -249,6 +249,7 @@ class DriverService {
     const authToken = await Jwt.issue({
       email: result[0][0].email,
       id: result[0][0].slug,
+      phone: result[0][0].phone,
       firstName: result[0][0].firstName,
       lastName: result[0][0].lastName,
       gender: result[0][0].gender,
@@ -439,20 +440,47 @@ class DriverService {
 
     // check driver's current balance
     const balance = await WalletService.getBalance(user.id)
-    console.log(balance)
-    if(balance < req.body.amount){
+    if(balance.balance < req.body.amount){
       throw new BadRequestError("Insufficient Balance")
     }
 
     const slug = generateString(4, true, false);
     //payload to the database
     const payload = {
+      user_id: user.id,
       amount: req.body.amount,
       slug: slug,
     };
 
-    const sql = `INSERT INTO wallet_request SET ?`;
+    const sql = `INSERT INTO withdrawal_requests SET ?`;
     const response = await adb.query(sql, payload);
+  }
+
+  public static async deleteWithdrawalRequest(req, user) {
+
+    const sql = `DELETE FROM withdrawal_requests WHERE slug = '${req.params.id}' AND user_id = '${user.id}' AND approved = 0`;
+    await adb.query(sql);
+    return;
+  }
+
+  public static async getWithdrawalRequest(req, user) {
+
+    const sql = `SELECT * FROM withdrawal_requests WHERE user_id = '${user.id}'`;
+    const result = await adb.query(sql);
+    return result[0];
+  }
+
+  public static async editPaymentDetails(req, user){
+
+    const payload = {
+      bank_name: req.body.bankName,
+      account_name: req.body.accountName,
+      account_number: req.body.accountNumber,
+      routing_number: req.body.routingNumber,
+    };
+
+    const sql = `UPDATE payment_details SET ? WHERE driver_phone = '${user.phone}'`
+    await adb.query(sql, payload)
   }
 
 }

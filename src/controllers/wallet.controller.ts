@@ -12,7 +12,7 @@ import { BadRequestError } from "../core/ApiError";
 exports.getBalance = asyncHandler(
   async (req: Request, res: Response) => {
 
-    await WalletService.getBalance(res.locals.user);
-    return new CreatedResponse("Success", []).send(res);
+    const result = await WalletService.getBalance(res.locals.user.id);
+    return new CreatedResponse("Success", result).send(res);
   }
 );

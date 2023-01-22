@@ -165,3 +165,24 @@ exports.createWithdrawalRequest = asyncHandler(
     return new SuccessResponse("Success", []).send(res);
   }
 );
+
+exports.deleteWithdrawalRequest = asyncHandler(
+  async (req: Request, res: Response) => {
+    await DriverService.deleteWithdrawalRequest(req, res.locals.user);
+    return new SuccessResponse("Success", []).send(res);
+  }
+);
+
+exports.getWithdrawalRequest = asyncHandler(
+  async (req: Request, res: Response) => {
+    const result = await DriverService.getWithdrawalRequest(req, res.locals.user);
+    return new SuccessResponse("Success", result).send(res);
+  }
+);
+
+exports.editPaymentDetails = asyncHandler(
+  async (req: Request, res: Response) => {
+    await DriverService.editPaymentDetails(req, res.locals.user);
+    return new SuccessResponse("Success", []).send(res);
+  }
+);

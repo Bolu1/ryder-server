@@ -64,6 +64,10 @@ router.delete('/delete', isAuth, controller.deleteDriver)
 
 // withdrawal request
 router.post('/withdrawal/request', isAuth, controller.createWithdrawalRequest)
+router.delete('/withdrawal/request/:id', isAuth, controller.deleteWithdrawalRequest)
+router.get('/withdrawal/request', isAuth, controller.getWithdrawalRequest)
+
+router.patch('/paymentDetails', isAuth, controller.editPaymentDetails)
 
 
 module.exports = router

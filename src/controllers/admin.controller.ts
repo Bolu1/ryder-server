@@ -61,3 +61,17 @@ exports.updatePassword = asyncHandler(
     return new SuccessResponse("Success", []).send(res);
   }
 );
+
+exports.getWithdrawalRequest = asyncHandler(
+  async (req: Request, res: Response) => {
+    const result = await AdminService.getWithdrawalRequest(req);
+    return new SuccessResponse("Success", result).send(res);
+  }
+);
+
+exports.editWithdrawalRequest = asyncHandler(
+  async (req: Request, res: Response) => {
+    await AdminService.editWithdrawalRequest(req);
+    return new SuccessResponse("Success", []).send(res);
+  }
+);

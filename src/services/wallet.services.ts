@@ -15,9 +15,9 @@ const adb = ndb.promise();
 
 class TripsService {
   
-  public static async getBalance(user) {
+  public static async getBalance(id) {
 
-    const result = await adb.query(`SELECT balance FROM wallets WHERE user_id = '${user.id}'`);
+    const result = await adb.query(`SELECT balance FROM wallets WHERE user_id = '${id}'`);
     return result[0][0];
   }
 
@@ -37,7 +37,7 @@ class TripsService {
 
   public static async UpdateBalance(newBalance, slug){
 
-    await adb.query(`UPDATE balance WHERE user_id = '${slug}' SET balance = newBalance`)
+    await adb.query(`UPDATE wallets SET balance = ${newBalance} WHERE user_id = '${slug}' `)
     return
   }
 }

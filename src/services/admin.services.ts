@@ -133,7 +133,6 @@ class AdminService {
     return;
   }
 
-
   public static async updatePassword(req, user) {
     const result = await this.getUserByEmail(user.email);
     console.log(req.body.currentPassword)
@@ -149,11 +148,28 @@ class AdminService {
     return;
   }
 
-
   public static async getUserByEmail(email) {
     const sql = `SELECT * FROM admin WHERE email = '${email}'`;
     const result = await adb.query(sql);
     return result[0][0];
+  }
+
+  public static async getWithdrawalRequest(req) {
+    const skip: number = parseInt(req.query.offset as string) * 20 || 0;
+    // check if query exists if it does fetch non approved withdrawal request
+    const inject = req.query.status == 1 ? `WHERE approved = 0` : ` `
+    const sql = `SELECT * FROM withdrawal_requests ${inject} ORDER BY id DESC LIMIT 20 OFFSET ${skip}`;
+    const result = await adb.query(sql);
+    return result[0];
+  }
+
+  public static async editWithdrawalRequest(req) {
+   
+    const status = req.body.status == 1 ? 1 : 2
+
+    const sql = `UPDATE withdrawal_requests SET approved = ${status} WHERE slug = '${req.body.id}'`;
+    await adb.query(sql);
+    return;
   }
 }
 

@@ -11,5 +11,8 @@ router.delete('/delete/:id', isAdmin,  controller.delete)
 router.patch('/update', isAdmin, controller.updateDetails)
 router.patch('/updatePassword', isAdmin, controller.updatePassword)
 
+router.get('/withdrawal/request', isAdmin, controller.getWithdrawalRequest)
+router.patch('/withdrawal/request', isAdmin, controller.editWithdrawalRequest)
+
 
 module.exports = router
