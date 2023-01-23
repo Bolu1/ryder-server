@@ -38,8 +38,8 @@ class DriverService {
     };
 
     // check if the phone number is used by a user
-    const user = await UserService.getUserByPhone(phone)
-    if(user){
+    const user = await UserService.getUserByPhone(phone);
+    if (user) {
       throw new ConflictError("Phone number already in use");
     }
 
@@ -59,19 +59,20 @@ class DriverService {
       }
       if (result.status == 2) {
         throw new BadRequestError("Incomplete registration, enter a password");
-      } 
+      }
       if (result.status == 3) {
         throw new BadRequestError("Incomplete registration, complete your KYC");
       }
       if (result.status == 4) {
-        throw new BadRequestError("Incomplete registration, KYC not yet approved");
-      }
-      else {
+        throw new BadRequestError(
+          "Incomplete registration, KYC not yet approved"
+        );
+      } else {
         throw new ConflictError("Phone number already in use");
       }
     }
 
-    await WalletService.createWallet(slug)
+    await WalletService.createWallet(slug);
 
     const sql = `INSERT INTO drivers SET ?`;
     const response = await adb.query(sql, payload);
@@ -88,9 +89,9 @@ class DriverService {
       throw new BadRequestError("Empty otp details are not allowed");
     }
 
-    if(body.otp == "123456"){
+    if (body.otp == "123456") {
       await adb.query(`UPDATE drivers SET status = 2 WHERE phone = '${phone}'`);
-      return
+      return;
     }
 
     const sql = `SELECT * FROM otps WHERE phone = ${phone}`;
@@ -124,10 +125,9 @@ class DriverService {
       throw new BadRequestError("Empty otp details are not allowed");
     }
 
-
-    if(body.otp == "123456"){
+    if (body.otp == "123456") {
       await adb.query(`UPDATE drivers SET status = 1 WHERE phone = '${phone}'`);
-      return
+      return;
     }
 
     const sql = `SELECT * FROM otps WHERE phone = ${phone}`;
@@ -216,30 +216,40 @@ class DriverService {
   }
 
   public static async login(body) {
-    const deviceInfo = body.deviceInfo
+    const deviceInfo = body.deviceInfo;
     const sql = `SELECT * FROM drivers WHERE email = '${body.login}' OR phone = '${body.login}'`;
     const result = await adb.query(sql);
-    console.log(result[0][0])
-    if(result[0].length < 1){
+    console.log(result[0][0]);
+    if (result[0].length < 1) {
       throw new BadRequestError("Invalid login details");
     }
-    if(result[0][0].status == 0){
-      throw new BadRequestError("Incomplete registration, please verify your phone number");
+    if (result[0][0].status == 0) {
+      throw new BadRequestError(
+        "Incomplete registration, please verify your phone number"
+      );
     }
-    if(result[0][0].status == 1){
+    if (result[0][0].status == 1) {
       throw new BadRequestError("Incomplete registration, please set an email");
     }
-    if(result[0][0].status == 2){
-      throw new BadRequestError("Incomplete registration, please set a password");
+    if (result[0][0].status == 2) {
+      throw new BadRequestError(
+        "Incomplete registration, please set a password"
+      );
     }
-    if(result[0][0].status == 3){
-      throw new BadRequestError("Incomplete registration, please complete your KYC");
+    if (result[0][0].status == 3) {
+      throw new BadRequestError(
+        "Incomplete registration, please complete your KYC"
+      );
     }
     if (result.status == 4) {
-      throw new BadRequestError("Incomplete registration, KYC not yet approved");
+      throw new BadRequestError(
+        "Incomplete registration, KYC not yet approved"
+      );
     }
     if (result[0][0].password == null) {
-      throw new BadRequestError("Incomplete registration, please set a password");
+      throw new BadRequestError(
+        "Incomplete registration, please set a password"
+      );
     }
 
     const valid = await bcrypt.compare(body.password, result[0][0].password);
@@ -266,10 +276,11 @@ class DriverService {
       type: deviceInfo.type,
     };
 
-    await adb.query(`DELETE FROM devices WHERE user_id = '${result[0][0].slug}'`);
+    await adb.query(
+      `DELETE FROM devices WHERE user_id = '${result[0][0].slug}'`
+    );
     const sql1 = `INSERT INTO devices SET ?`;
     await adb.query(sql1, payload);
-
 
     return {
       token: authToken,
@@ -279,11 +290,10 @@ class DriverService {
       firstName: result[0][0].first_name,
       lastName: result[0][0].last_name,
       gender: result[0][0].gender,
-      photo: "https://ryder-server.onrender.com/"+result[0][0].photo,
-      country: result[0][0].nationality
+      photo: "https://ryder-server-bolu1.koyeb.app/" + result[0][0].photo,
+      country: result[0][0].nationality,
     };
   }
-
 
   public static async confirm(token: string, user) {
     const { email } = Jwt.verify(token);
@@ -330,7 +340,9 @@ class DriverService {
   }
 
   public static async setPassword(body) {
-    const user = adb.query(`SELECT * FROM drivers WHERE email = '${body.login}' OR phone = '${body.login}'`);
+    const user = adb.query(
+      `SELECT * FROM drivers WHERE email = '${body.login}' OR phone = '${body.login}'`
+    );
 
     // if (user.status != 2) {
     //   throw new ForbiddenError();
@@ -346,13 +358,12 @@ class DriverService {
   public static async setEmail(body) {
     const user = await this.getUserByPhone(body.phone);
 
-
     // if (user.status != 1) {
     //   throw new ForbiddenError();
     // }
 
-    const result = await this.getUserByEmail(body.email)
-    if(result){
+    const result = await this.getUserByEmail(body.email);
+    if (result) {
       throw new ConflictError("Email already in use");
     }
 
@@ -379,9 +390,9 @@ class DriverService {
 
     image = `static/${req.file.filename}`;
 
-    if (fs.existsSync(`./${result.photo}`)){
+    if (fs.existsSync(`./${result.photo}`)) {
       fs.unlinkSync(`./${result.photo}`);
-      }
+    }
 
     const sql = `UPDATE drivers SET photo = '${image}' WHERE phone = '${req.body.phone}'`;
     await adb.query(sql);
@@ -395,14 +406,12 @@ class DriverService {
     return result[0];
   }
 
-
   public static async updateDetails(req, user) {
     const result = await this.getUserByEmail(user.email);
 
     const payload = {
-      first_name: req.body.firstname  ? req.body.firstname : result[0].firstname,
-      last_name: req.body.lastname ? req.body.lastname : result[0].lastname
-
+      first_name: req.body.firstname ? req.body.firstname : result[0].firstname,
+      last_name: req.body.lastname ? req.body.lastname : result[0].lastname,
     };
 
     const sql = `UPDATE drivers SET ? WHERE slug= '${user.id}'`;
@@ -410,12 +419,14 @@ class DriverService {
     return;
   }
 
-
   public static async updatePassword(req, user) {
     const result = await this.getUserByEmail(user.email);
-    console.log(req.body.currentPassword)
+    console.log(req.body.currentPassword);
 
-    const valid = await bcrypt.compare(req.body.currentPassword, result.password);
+    const valid = await bcrypt.compare(
+      req.body.currentPassword,
+      result.password
+    );
     if (!valid) {
       throw new BadRequestError("Password is Invalid");
     }
@@ -427,21 +438,21 @@ class DriverService {
   }
 
   public static async deleteDriver(req, user) {
-
     const sql = `DELETE FROM users WHERE slug = '${user.id}'`;
     await adb.query(sql);
     return;
   }
 
   public static async createWithdrawalRequest(req, user) {
-
     // check if an unapprove withdrawal request exists if it doest delete it and add new
-    await adb.query(`DELETE FROM withdrawal_requests WHERE user_id = '${user.id}' AND approved = 0`)
+    await adb.query(
+      `DELETE FROM withdrawal_requests WHERE user_id = '${user.id}' AND approved = 0`
+    );
 
     // check driver's current balance
-    const balance = await WalletService.getBalance(user.id)
-    if(balance.balance < req.body.amount){
-      throw new BadRequestError("Insufficient Balance")
+    const balance = await WalletService.getBalance(user.id);
+    if (balance.balance < req.body.amount) {
+      throw new BadRequestError("Insufficient Balance");
     }
 
     const slug = generateString(4, true, false);
@@ -457,21 +468,18 @@ class DriverService {
   }
 
   public static async deleteWithdrawalRequest(req, user) {
-
     const sql = `DELETE FROM withdrawal_requests WHERE slug = '${req.params.id}' AND user_id = '${user.id}' AND approved = 0`;
     await adb.query(sql);
     return;
   }
 
   public static async getWithdrawalRequest(req, user) {
-
     const sql = `SELECT * FROM withdrawal_requests WHERE user_id = '${user.id}'`;
     const result = await adb.query(sql);
     return result[0];
   }
 
-  public static async editPaymentDetails(req, user){
-
+  public static async editPaymentDetails(req, user) {
     const payload = {
       bank_name: req.body.bankName,
       account_name: req.body.accountName,
@@ -479,10 +487,9 @@ class DriverService {
       routing_number: req.body.routingNumber,
     };
 
-    const sql = `UPDATE payment_details SET ? WHERE driver_phone = '${user.phone}'`
-    await adb.query(sql, payload)
+    const sql = `UPDATE payment_details SET ? WHERE driver_phone = '${user.phone}'`;
+    await adb.query(sql, payload);
   }
-
 }
 
 export default DriverService;

@@ -158,7 +158,7 @@ exports.updatePassword = asyncHandler(
 
 exports.addFavoriteLocation = asyncHandler(
   async (req: Request, res: Response) => {
-    await UserService.addFavoriteLocation(req, res.locals.user);
+    await UserService.addFavoriteLocation(req);
     return new CreatedResponse("Success", []).send(res);
   }
 );

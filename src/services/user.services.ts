@@ -285,7 +285,7 @@ class UserService {
       firstName: result[0][0].first_name,
       lastName: result[0][0].last_name,
       gender: result[0][0].gender,
-      photo: "https://ryder-server.onrender.com/" + result[0][0].photo,
+      photo: "https://ryder-server-bolu1.koyeb.app/" + result[0][0].photo,
       country: result[0][0].nationality,
     };
   }
@@ -466,12 +466,18 @@ class UserService {
     return;
   }
 
-  public static async addFavoriteLocation(req, user) {
+  public static async addFavoriteLocation(req) {
     //payload to the database
     const slug = generateString(4, true, false);
     //payload to the database
+    // get user id from phone number
+    const user = await this.getUserByPhone(req.body.phone);
+    if (!user) {
+      throw new BadRequestError("User does not exist");
+    }
+
     const payload = {
-      user_id: user.id,
+      user_id: user.slug,
       slug: slug,
       address: req.body.address,
       icon: req.file.path,
@@ -509,6 +515,7 @@ class UserService {
       slug: slug,
       name: req.body.name,
       phone: req.body.phone,
+      relationship: req.body.relationship,
     };
 
     const sql = `INSERT INTO emergency_contacts SET ?`;
@@ -531,18 +538,11 @@ class UserService {
     return;
   }
 
-
-
-
-
-
-
-
   public static async pushOne(req) {
-
     // Get the FCM token for the target device
-    const firebaseToken =
-      req.body.token? req.body.token : "ehMlqNRjT9mYJpCz9tpAk9:APA91bE4eOUrcuSZKYNBW2JJiQm6mfKMpucbqFUTCUdJ9D8QhEuxXCIrUMiyj9bbYLim5ko3aPb11g-sIbWE3l5R0pGf7WQNUNzSEiQHTrsJuL3lAeg-SwJvEihoAyQ0mdnF1dGLa4bG";
+    const firebaseToken = req.body.token
+      ? req.body.token
+      : "ehMlqNRjT9mYJpCz9tpAk9:APA91bE4eOUrcuSZKYNBW2JJiQm6mfKMpucbqFUTCUdJ9D8QhEuxXCIrUMiyj9bbYLim5ko3aPb11g-sIbWE3l5R0pGf7WQNUNzSEiQHTrsJuL3lAeg-SwJvEihoAyQ0mdnF1dGLa4bG";
 
     // Create the notification payload
     const payload = {
@@ -567,11 +567,7 @@ class UserService {
       });
   }
 
-
-
   public static async pushMany(req) {
-
-
     // Get the FCM tokens for the target devices
     const firebaseTokens = [
       "cXqN7dghSGaCIWT_CM4jZx:APA91bFTsLPwe8eEz4GnAtf6sLJaFBzxN8M0PEOtqm9qEZxDTT-IA9woaz0CrraEu4mC2gl0j4iq_QVJ94eezDKDSfEQ_N_oFXMKawRot16LbB4WRX-BWkT4XPNK3Y8MTK5ysDGK9mDq",

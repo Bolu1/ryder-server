@@ -38,7 +38,6 @@ class KycService {
     if (result.kyc < 1) {
       throw new ForbiddenError("Complete pervious step first");
     }
-    
 
     const slug = generateString(4, true, false);
     //payload to the database
@@ -76,7 +75,7 @@ class KycService {
       dob: req.body.dob,
       address: req.body.address,
       kyc: 1,
-      info_approved: 1
+      info_approved: 1,
     };
 
     const sql = `UPDATE drivers SET ? WHERE phone = '${req.body.phone}'`;
@@ -86,7 +85,7 @@ class KycService {
   }
 
   public static async setImage(req) {
-    console.log("herw")
+    console.log("herw");
     const result = await DriverService.getUserByPhone(req.body.phone);
     var image;
     if (!result) {
@@ -145,24 +144,33 @@ class KycService {
   }
 
   public static async getKycStatus(phone) {
-    const carDetails = await adb.query(`SELECT status FROM car_details WHERE driver_phone = '${phone}'`)
-    const driverDocuments = await adb.query(`SELECT status FROM driver_documents WHERE driver_phone = '${phone}'`)
-    const drivingHistory = await adb.query(`SELECT status FROM driving_history WHERE driver_phone = '${phone}'`)
-    const paymentDetails = await adb.query(`SELECT status FROM payment_details WHERE driver_phone = '${phone}'`)
-    const userInfo = await adb.query(`SELECT info_approved, image_approved FROM drivers WHERE phone = '${phone}'`)
+    const carDetails = await adb.query(
+      `SELECT status FROM car_details WHERE driver_phone = '${phone}'`
+    );
+    const driverDocuments = await adb.query(
+      `SELECT status FROM driver_documents WHERE driver_phone = '${phone}'`
+    );
+    const drivingHistory = await adb.query(
+      `SELECT status FROM driving_history WHERE driver_phone = '${phone}'`
+    );
+    const paymentDetails = await adb.query(
+      `SELECT status FROM payment_details WHERE driver_phone = '${phone}'`
+    );
+    const userInfo = await adb.query(
+      `SELECT info_approved, image_approved FROM drivers WHERE phone = '${phone}'`
+    );
 
     const response = {
       carDetails: carDetails[0][0] ? carDetails[0][0].status : 0,
-      driverDocuments : driverDocuments[0][0] ? driverDocuments[0][0].status : 0,
-      drivingHistory : drivingHistory[0][0] ? drivingHistory[0][0].status : 0,
-      paymentDetails : paymentDetails[0][0] ? paymentDetails[0][0].status : 0,
-      personalInfo : userInfo[0][0].info_approved,
-      image: userInfo[0][0].image_approved
-    }
+      driverDocuments: driverDocuments[0][0] ? driverDocuments[0][0].status : 0,
+      drivingHistory: drivingHistory[0][0] ? drivingHistory[0][0].status : 0,
+      paymentDetails: paymentDetails[0][0] ? paymentDetails[0][0].status : 0,
+      personalInfo: userInfo[0][0].info_approved,
+      image: userInfo[0][0].image_approved,
+    };
 
-    console.log(carDetails[0][0])
-    return response
-   
+    console.log(carDetails[0][0]);
+    return response;
   }
 
   public static async uploadDocument(req) {
@@ -173,17 +181,15 @@ class KycService {
     }
 
     // get and delete all images
-    var sql1 = `SELECT * FROM driver_documents WHERE driver_phone = '${req.body.phone}'  AND file_type = "${req.body.type}"`
+    var sql1 = `SELECT * FROM driver_documents WHERE driver_phone = '${req.body.phone}'  AND file_type = "${req.body.type}"`;
 
-    const driver_doc = await adb.query(
-      sql1
-    );
+    const driver_doc = await adb.query(sql1);
     if (driver_doc[0].length > 0) {
       await adb.query(
         `DELETE FROM driver_documents WHERE driver_phone = '${req.body.phone}' AND file_type = "${req.body.type}"`
       );
-      if (fs.existsSync(`./${driver_doc[0][0].file_url}`)){
-      fs.unlinkSync(`./${driver_doc[0][0].file_url}`);
+      if (fs.existsSync(`./${driver_doc[0][0].file_url}`)) {
+        fs.unlinkSync(`./${driver_doc[0][0].file_url}`);
       }
     }
 
@@ -192,7 +198,7 @@ class KycService {
       file_url: req.file.path,
       file_type: req.body.type,
       driver_phone: req.body.phone,
-      slug: slug
+      slug: slug,
     };
 
     const sql = `INSERT INTO driver_documents SET ?`;
@@ -203,11 +209,10 @@ class KycService {
       `UPDATE drivers SET kyc = 3 WHERE phone = '${req.body.phone}'`
     );
 
-    return "https://ryder-server.onrender.com/"+req.file.path
+    return "https://ryder-server-bolu1.koyeb.app/" + req.file.path;
   }
 
-  public static async drivingHistory(body){
-
+  public static async drivingHistory(body) {
     const result = await DriverService.getUserByPhone(body.phone);
 
     if (result.kyc < 3) {
@@ -224,168 +229,139 @@ class KycService {
       been_in_accident: body.beenInAccident,
       been_arrested: body.beenArrested,
       driver_phone: body.phone,
-      slug: slug
+      slug: slug,
     };
 
     const sql = `INSERT INTO driving_history SET ?`;
     await adb.query(sql, payload);
 
-    await adb.query(
-      `UPDATE drivers SET kyc = 4 WHERE phone = '${body.phone}'`
-    );
+    await adb.query(`UPDATE drivers SET kyc = 4 WHERE phone = '${body.phone}'`);
   }
 
-
   public static async getCarDetails(req) {
-
-
     const sql = `SELECT * FROM car_details WHERE driver_phone = '${req.params.phone}'`;
     const result = await adb.query(sql);
-    const car = await adb.query(`SELECT image_url FROM car_images WHERE driver_phone = '${req.params.phone}'`);
-
+    const car = await adb.query(
+      `SELECT image_url FROM car_images WHERE driver_phone = '${req.params.phone}'`
+    );
 
     return {
       details: result[0][0],
-      images: car[0]
-    }
+      images: car[0],
+    };
   }
 
   public static async getPersonalInformation(req) {
-
     const sql = `SELECT slug, first_name, last_name, email, phone, photo, gender, nationality, city, address, dob FROM drivers WHERE phone = '${req.params.phone}'`;
     const result = await adb.query(sql);
 
-    return result[0][0]
+    return result[0][0];
   }
 
   public static async getPaymentDetails(req) {
-
     const sql = `SELECT * FROM payment_details WHERE driver_phone = '${req.params.phone}'`;
     const result = await adb.query(sql);
 
-    return result[0][0]
+    return result[0][0];
   }
 
   public static async getUploadedDocument(req) {
-
     const sql = `SELECT * FROM driver_documents WHERE driver_phone = '${req.params.phone}'`;
     const result = await adb.query(sql);
 
-    return result[0]
+    return result[0];
   }
 
   public static async getDrivingHistory(req) {
-
     const sql = `SELECT * FROM driving_history WHERE driver_phone = '${req.params.phone}'`;
     const result = await adb.query(sql);
 
-    return result[0][0]
+    return result[0][0];
   }
 
-
   public static async editPersonalInformation(req) {
-
-    if(req.body.status != 2 && req.body.status != 3){
-
-      throw new BadRequestError("Invalid input")
+    if (req.body.status != 2 && req.body.status != 3) {
+      throw new BadRequestError("Invalid input");
     }
 
-    const status = req.body.status == 2 ? 2 : 3
+    const status = req.body.status == 2 ? 2 : 3;
 
     const sql = `UPDATE drivers SET info_approved = ${status} WHERE phone = '${req.body.phone}'`;
     await adb.query(sql);
 
-    return
+    return;
   }
 
-
   public static async editCarDetails(req) {
-
-    if(req.body.status != 2 && req.body.status != 3){
-
-      throw new BadRequestError("Invalid input")
+    if (req.body.status != 2 && req.body.status != 3) {
+      throw new BadRequestError("Invalid input");
     }
 
-    const status = req.body.status == 2 ? 2 : 3
+    const status = req.body.status == 2 ? 2 : 3;
 
     const sql = `UPDATE car_details SET status = ${status} WHERE driver_phone = '${req.body.phone}'`;
     await adb.query(sql);
 
-    return 
+    return;
   }
 
-
   public static async photoAction(req) {
-
-    if(req.body.status != 2 && req.body.status != 3){
-
-      throw new BadRequestError("Invalid input")
+    if (req.body.status != 2 && req.body.status != 3) {
+      throw new BadRequestError("Invalid input");
     }
 
-    const status = req.body.status == 2 ? 2 : 3
+    const status = req.body.status == 2 ? 2 : 3;
 
     const sql = `UPDATE drivers SET image_approved = ${status} WHERE phone = '${req.body.phone}'`;
     await adb.query(sql);
 
-    return 
+    return;
   }
 
-
   public static async paymentDetailsAction(req) {
-
-    if(req.body.status != 2 && req.body.status != 3){
-
-      throw new BadRequestError("Invalid input")
+    if (req.body.status != 2 && req.body.status != 3) {
+      throw new BadRequestError("Invalid input");
     }
 
-    const status = req.body.status == 2 ? 2 : 3
+    const status = req.body.status == 2 ? 2 : 3;
 
     const sql = `UPDATE payment_details SET status = ${status} WHERE driver_phone = '${req.body.phone}'`;
     await adb.query(sql);
 
-    return 
+    return;
   }
 
-
   public static async uploadedDocumentsAction(req) {
-
-    if(req.body.status != 2 && req.body.status != 3){
-
-      throw new BadRequestError("Invalid input")
+    if (req.body.status != 2 && req.body.status != 3) {
+      throw new BadRequestError("Invalid input");
     }
 
-    const status = req.body.status == 2 ? 2 : 3
+    const status = req.body.status == 2 ? 2 : 3;
 
     const sql = `UPDATE driver_documents SET status = ${status} WHERE driver_phone = '${req.body.phone}'`;
     await adb.query(sql);
 
-    return 
+    return;
   }
 
-
   public static async drivingHistoryAction(req) {
-
-    if(req.body.status != 2 && req.body.status != 3){
-
-      throw new BadRequestError("Invalid input")
+    if (req.body.status != 2 && req.body.status != 3) {
+      throw new BadRequestError("Invalid input");
     }
 
-    const status = req.body.status == 2 ? 2 : 3
+    const status = req.body.status == 2 ? 2 : 3;
 
     const sql = `UPDATE driving_history SET status = ${status} WHERE driver_phone = '${req.body.phone}'`;
     await adb.query(sql);
 
-    return 
+    return;
   }
 
-
   public static async approveUser(req) {
-
-
     const sql = `UPDATE drivers SET status = 5 WHERE phone = '${req.body.phone}'`;
     await adb.query(sql);
 
-    return 
+    return;
   }
 }
 
