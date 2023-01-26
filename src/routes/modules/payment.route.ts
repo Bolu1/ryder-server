@@ -4,8 +4,8 @@ const isAuth = require('../../middleware/isAuth')
 
 const router = express()
 
-router.get('/initPaystack', isAuth, controller.initPaystack)
-router.get('/verifyPaystack', isAuth, controller.verifyPaystack)
+router.get('/verifyPaystack', controller.verifyPaystack)
+router.get('/verifyFlutterWave', controller.verifyFlutterWave)
 
 
 module.exports = router

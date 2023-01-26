@@ -9,17 +9,19 @@ import {
 } from "../core/ApiResponse";
 import { BadRequestError } from "../core/ApiError";
 
-exports.initPaystack = asyncHandler(
-  async (req: Request, res: Response) => {
-
-    await PaymentService.initPaystack(req.body, res, res.locals.user);
-  }
-);
-
 exports.verifyPaystack = asyncHandler(
   async (req: Request, res: Response) => {
 
-    await PaymentService.verifyPayment(req, res);
+    await PaymentService.verifyPaystack(req, res);
 
   }
 )
+
+exports.verifyFlutterWave = asyncHandler(
+  async (req: Request, res: Response) => {
+
+    await PaymentService.verifyFlutterWave(req, res);
+
+  }
+)
+

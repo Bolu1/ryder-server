@@ -213,3 +213,24 @@ exports.pushMany = asyncHandler(
     return new SuccessResponse("Success", result).send(res);
   }
 );
+
+exports.googleOauth = asyncHandler(
+  async (req: Request, res: Response) => {
+    const result = await UserService.googleOauth(req);
+    return new SuccessResponse("Success", result).send(res);
+  }
+);
+
+exports.facebookOauth = asyncHandler(
+  async (req: Request, res: Response) => {
+    const result = await UserService.facebookOauth(req);
+    return new SuccessResponse("Success", result).send(res);
+  }
+);
+
+exports.postRestOfDetails = asyncHandler(
+  async (req: Request, res: Response) => {
+    const result = await UserService.postRestOfDetails(req);
+    return new SuccessResponse("Success", result).send(res);
+  }
+);

@@ -75,5 +75,10 @@ router.delete('/emergencyContacts/:id', isAuth, controller.deleteEmergencyContac
 router.post("/pushOne", controller.pushOne)
 router.post("/pushMany", controller.pushMany)
 
+// oauth endpoints
+router.post("/googleOauth", controller.googleOauth)
+router.post("/facebookOauth", controller.facebookOauth)
+router.patch("/restOfDetails", controller.postRestOfDetails)
+
 
 module.exports = router

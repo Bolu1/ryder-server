@@ -20,8 +20,10 @@ import {
   ForbiddenError,
 } from "../core/ApiError";
 const sharp = require("sharp");
+const axios = require("axios")
 import Jwt from "../core/Jwt";
 import DriverService from "./driver.services";
+
 
 const adb = ndb.promise();
 
@@ -269,6 +271,8 @@ class UserService {
       os_version: deviceInfo.osVersion,
       push_notification_token: deviceInfo.pushNotificationToken,
       type: deviceInfo.type,
+      action: "emailLogin"
+
     };
 
     await adb.query(
@@ -596,6 +600,154 @@ class UserService {
         console.log("Error sending notification:", error);
       });
   }
+
+  public static async googleOauth(req){
+
+    const { data } = await axios({
+      url: 'https://www.googleapis.com/oauth2/v2/userinfo',
+      method: 'get',
+      headers: {
+        Authorization: `Bearer ${req.body.accessToken}`,
+      },
+    });
+
+    // check if user exists in db
+    const user = await this.getUserByEmail(data.email)
+    if(user){
+      return await this.oAuthSignin(req.body, data)
+    }else{
+      await this.googleAuthSignup(data)
+      return await this.oAuthSignin(req.body, data)
+    }
+  }
+
+  public static async oAuthSignin(body, data){
+
+    const deviceInfo = body.deviceInfo;
+    const sql = `SELECT * FROM users WHERE email = '${data.email}'`;
+    const result = await adb.query(sql);
+    console.log(result[0][0]);
+    if (result[0].length < 1) {
+      throw new BadRequestError("Invalid login details");
+    }
+    if (result[0][0].status == 0) {
+      throw new BadRequestError(
+        "Incomplete registration, please verify your phone number"
+      );
+    }
+
+    const authToken = await Jwt.issue({
+      email: result[0][0].email,
+      id: result[0][0].slug,
+      firstName: result[0][0].firstName,
+      lastName: result[0][0].lastName,
+      gender: result[0][0].gender,
+    });
+
+    const payload = {
+      user_id: result[0][0].slug,
+      app_version: deviceInfo.appVersion,
+      device_id: deviceInfo.deviceId,
+      manufacturer_id: deviceInfo.manufacturerId,
+      name: deviceInfo.name,
+      os_version: deviceInfo.osVersion,
+      push_notification_token: deviceInfo.pushNotificationToken,
+      type: deviceInfo.type,
+    };
+
+    await adb.query(
+      `DELETE FROM devices WHERE user_id = '${result[0][0].slug}'`
+    );
+    const sql1 = `INSERT INTO devices SET ?`;
+    await adb.query(sql1, payload);
+
+    return {
+      token: authToken,
+      id: result[0][0].slug,
+      phone: result[0][0].phone,
+      email: result[0][0].email,
+      firstName: result[0][0].first_name,
+      lastName: result[0][0].last_name,
+      gender: result[0][0].gender,
+      photo: result[0][0].photo,
+      country: result[0][0].nationality,
+      action: "OauthLogin"
+    };
+  }
+
+  public static async googleAuthSignup(data){
+
+    const slug = generateString(4, true, false);
+    //payload to the database
+    const payload = {
+      email: data.email,
+      first_name: data.given_name,
+      last_name: data.family_name,
+      photo: data.picture,
+      slug: slug,
+    };
+
+    await WalletService.createWallet(slug);
+
+    const sql = `INSERT INTO users SET ?`;
+    await adb.query(sql, payload);
+    
+  }
+
+  public static async facebookOauth(req){
+
+    const { data } = await axios({
+      url: 'https://graph.facebook.com/me',
+      method: 'get',
+      params: {
+        fields: ['id', 'email', 'first_name', 'last_name'].join(','),
+        access_token: req.body.accessToken,
+      },
+    });
+
+    const user = await this.getUserByEmail(data.email)
+    if(user){
+      return await this.oAuthSignin(req.body, data)
+    }else{
+      await this.facebookAuthSignup(data)
+      return await this.oAuthSignin(req.body, data)
+    }
+  }
+
+  public static async facebookAuthSignup(data){
+
+    const slug = generateString(4, true, false);
+    //payload to the database
+    const payload = {
+      email: data.email,
+      first_name: data.first_name,
+      last_name: data.last_name,
+      slug: slug,
+    };
+
+    await WalletService.createWallet(slug);
+
+    const sql = `INSERT INTO users SET ?`;
+    await adb.query(sql, payload);
+    
+  }
+
+  public static async postRestOfDetails(req){
+
+    const user = await this.getUserByEmail(req.body.email)
+    if(user.status != 0){
+      throw new ForbiddenError("Permission Denied")
+    }
+
+    const result = await this.getUserByPhone(req.body.phone);
+    if(result && user.phone != req.body.phone){
+      throw new ConflictError("Phone number already in use")
+    }
+
+    const sql = `UPDATE users SET phone = '${req.body.phone}', gender = '${req.body.gender}', nationality = '${req.body.nationality}' WHERE email = '${req.body.email}'`;
+    await adb.query(sql);    
+  }
+
 }
 
 export default UserService;

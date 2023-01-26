@@ -50,5 +50,10 @@ const paystack = (request) => {
       console.log(error);
     }
   };
+
   
-module.exports = paystack
+
+  
+module.exports = {
+  paystack
+}
