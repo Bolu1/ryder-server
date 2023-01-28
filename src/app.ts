@@ -4,11 +4,14 @@ const bodyParser = require('body-parser')
 const v1 = require('./routes/index')
 const web = require('./routes/web')
 const cors = require('cors')
+var app = require ('express')()
 const helmet = require('helmet')
 const deserializeUser = require ('./middleware/deserializeUser')
 const morgan = require('morgan')
 import ErrorHandler from './middleware/errorHandler';
 import { NotFoundError } from './core/ApiError';
+var server = require('http').Server(app)
+import { socker } from './socker/index';
 const pool = require("./config/connect")
 
 // security depenedecies
@@ -20,8 +23,15 @@ import mongoSanitize from 'express-mongo-sanitize';
  
 // taskkill /F /IM node.exe
 
-const app = express() 
+socker(server);
 
+
+const PORT = process.env.PORT|| 8000
+
+server.listen(PORT, ()=>{
+
+  console.log(colors.random(`Application Listening at http://localhost:${PORT}`))
+})
 
 app.use(cors())
 // app.use(deserializeUser)
@@ -43,7 +53,7 @@ app.use('/static', express.static('static'))
 app.use(mongoSanitize());
 
 // set security headers for api security
-// app.use(helmet());
+app.use(helmet());
 
 // prevent XSS attacks
 app.use(xss());
@@ -72,16 +82,6 @@ app.use('*', (req, res, next) => next(new NotFoundError()));
 
 // error handler
 app.use(ErrorHandler);
-
-
-
-
-const PORT = process.env.PORT|| 8000
-
-app.listen(PORT, ()=>{
-    
-    console.log(colors.random(`Application Listening at http://localhost:${PORT}`))
-})
 
 
 module.exports = app

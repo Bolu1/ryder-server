@@ -361,6 +361,10 @@ class DriverService {
     // if (user.status != 1) {
     //   throw new ForbiddenError();
     // }
+    const driver = await UserService.getUserByEmail(body.email)
+    if (driver) {
+      throw new ConflictError("Email already in use");
+    }
 
     const result = await this.getUserByEmail(body.email);
     if (result) {

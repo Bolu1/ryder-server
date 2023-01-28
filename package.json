@@ -4,8 +4,8 @@
   "description": "",
   "main": "src/app.ts",
   "scripts": {
-    "start": "node dist/app.js",
-    "dev": "nodemon src/app.ts ",
+    "start": "node dist/app.js && node dist/server.js",
+    "dev": "nodemon src/app.ts && nodemon src/server.ts",
     "build": "tsc -p ."
   },
   "repository": {
@@ -71,6 +71,7 @@
     "request": "^2.88.2",
     "response-time": "^2.3.2",
     "sharp": "^0.30.7",
+    "socket.io": "^4.5.4",
     "swagger-jsdoc": "^6.1.0",
     "swagger-ui-express": "^4.1.6",
     "twilio": "^3.83.4",

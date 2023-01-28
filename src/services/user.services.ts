@@ -46,6 +46,12 @@ class UserService {
       slug: slug,
     };
 
+    const user = await DriverService.getUserByPhone(phone);
+    if (user) {
+      throw new ConflictError("Phone number already in use");
+    }
+
+
     // check if user exists
     const result = await this.getUserByPhone(phone);
     if (result) {
@@ -388,6 +394,11 @@ class UserService {
     // if (user.status != 1) {
     //   throw new ForbiddenError();
     // }
+    const driver = await DriverService.getUserByEmail(body.email)
+    if (driver) {
+      throw new ConflictError("Email already in use");
+    }
+
 
     const result = await this.getUserByEmail(body.email);
     if (result) {
