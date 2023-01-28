@@ -271,8 +271,6 @@ class UserService {
       os_version: deviceInfo.osVersion,
       push_notification_token: deviceInfo.pushNotificationToken,
       type: deviceInfo.type,
-      action: "emailLogin"
-
     };
 
     await adb.query(
@@ -290,6 +288,7 @@ class UserService {
       lastName: result[0][0].last_name,
       gender: result[0][0].gender,
       photo: "https://ryder-server-bolu1.koyeb.app/" + result[0][0].photo,
+      action: "emailLogin",
       country: result[0][0].nationality,
     };
   }
