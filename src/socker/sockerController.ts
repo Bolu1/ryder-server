@@ -34,19 +34,30 @@ const app = server => {
       io.emit("getUsers", users);
     });
   
-    socket.on("sendMessage", ({ senderId, receiverId, text }) => {
+    socket.on("greet", (text) => {
       try{
-      const user = getUser(receiverId);
-      console.log("b ", user)
-      console.log(users)
-      io.to(user.socketId).emit("getMessage", {
-        senderId,
-        text,
+      console.log("greet")
+      io.to(socket.id).emit("getGreet", {
+        text
       });
     }catch(error){
       console.log("not online")
     }
     });
+
+    // socket.on("sendMessage", ({ senderId, receiverId, text }) => {
+    //   try{
+    //   const user = getUser(receiverId);
+    //   console.log("b ", user)
+    //   console.log(users)
+    //   io.to(user.socketId).emit("getMessage", {
+    //     senderId,
+    //     text,
+    //   });
+    // }catch(error){
+    //   console.log("not online")
+    // }
+    // });
   
     socket.on("disconnect", () => {
       console.log("a user disconnected!");
