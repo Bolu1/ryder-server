@@ -36,7 +36,7 @@ const app = server => {
   
     socket.on("greet", (text) => {
       try{
-      console.log("greet")
+      console.log(text)
       io.to(socket.id).emit("getGreet", {
         text
       });

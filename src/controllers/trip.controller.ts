@@ -11,22 +11,40 @@ import { BadRequestError } from "../core/ApiError";
 
 exports.newTrip = asyncHandler(
   async (req: Request, res: Response) => {
-    // validator
-    const { isValid, messages } = validateParameters(
-      [
-        "startLocation",
-        "startCoordinate",
-        "endCoordinate",
-        "endLocation",
-      ],
-      req.body
-    );
 
-    if (isValid) {
-      throw new BadRequestError();
-    }
+    const slug = await TripsService.newTrip(req, res.locals.user);
+    return new CreatedResponse("Success", slug).send(res);
+  }
+);
 
-    await TripsService.newTrip(req.body);
-    return new CreatedResponse("Success", []).send(res);
+exports.driverAccept = asyncHandler(
+  async (req: Request, res: Response) => {
+
+    await TripsService.driverAccept(req, res.locals.user);
+    return new SuccessResponse("Success", []).send(res);
+  }
+);
+
+exports.cancelTrip = asyncHandler(
+  async (req: Request, res: Response) => {
+
+    await TripsService.cancelTrip(req, res.locals.user);
+    return new SuccessResponse("Success", []).send(res);
+  }
+);
+
+exports.getTripHistory = asyncHandler(
+  async (req: Request, res: Response) => {
+
+    const result = await TripsService.getTripHistory(req, res.locals.user);
+    return new SuccessResponse("Success", result).send(res);
+  }
+);
+
+exports.getOneTripHistory = asyncHandler(
+  async (req: Request, res: Response) => {
+
+    const result = await TripsService.getOneTripHistory(req, res.locals.user);
+    return new SuccessResponse("Success", result).send(res);
   }
 );

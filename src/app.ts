@@ -61,10 +61,10 @@ app.use(helmet());
 // prevent XSS attacks
 app.use(xss());
 
-// api request rate limiting default : 100 requests in 10minutes
+// api request rate limiting default : 50000 requests in 10minutes
 const limiter = rateLimit({
 	windowMs: 10 * 60 * 1000, // 10 mins
-	max: 100,
+	max: 50000,
 });
 app.use(limiter);
 

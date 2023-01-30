@@ -4,7 +4,11 @@ const isAuth = require('../../middleware/isAuth')
 
 const router = express()
 
-router.get('/new', controller.newTrip)
+router.post('/new', isAuth, controller.newTrip)
+router.patch('/driverAccept/:id', isAuth, controller.driverAccept)
+router.patch('/cancel/:id', isAuth, controller.cancelTrip)
+router.get('/history', isAuth, controller.getTripHistory)
+router.get('/history/trip/:id', isAuth, controller.getOneTripHistory)
 
 
 module.exports = router
