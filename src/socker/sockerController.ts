@@ -24,40 +24,61 @@ const app = server => {
 
   console.log('Socketio initialised!');
 
-  io.on("connection", (socket) => {
+
+  // messages
+  io.of("/messages").on("connection", (socket) => {
     console.log("a user connected");
-    io.emit("welcome", "hello th is is socket");
+    io.emit("welcome", "hello the is is socket");
     socket.on("addUser", (userId) => {
       console.log(userId, socket.id)
       adduser(userId, socket.id);
       console.log("a ",users)
       io.emit("getUsers", users);
     });
-  
-    socket.on("greet", (text) => {
+
+    socket.on("sendMessage", ({ senderId, receiverId, text }) => {
       try{
-      console.log(text)
-      io.to(socket.id).emit("getGreet", {
-        text
+      const user = getUser(receiverId);
+      console.log("b ", user)
+      console.log(users)
+      io.to(user.socketId).emit("getMessage", {
+        senderId,
+        text,
       });
     }catch(error){
       console.log("not online")
     }
     });
+  
+    socket.on("disconnect", () => {
+      console.log("a user disconnected!");
+      removeUser(socket.id);
+    });
+  });
 
-    // socket.on("sendMessage", ({ senderId, receiverId, text }) => {
-    //   try{
-    //   const user = getUser(receiverId);
-    //   console.log("b ", user)
-    //   console.log(users)
-    //   io.to(user.socketId).emit("getMessage", {
-    //     senderId,
-    //     text,
-    //   });
-    // }catch(error){
-    //   console.log("not online")
-    // }
-    // });
+  io.of("/trips").on("connection", (socket) => {
+    console.log("a user connected");
+    io.emit("welcome", "hello the is is socket");
+    socket.on("addUser", (userId) => {
+      console.log(userId, socket.id)
+      adduser(userId, socket.id);
+      console.log("a ",users)
+      io.emit("getUsers", users);
+    });
+
+    socket.on("sendMessage", ({ senderId, receiverId, text }) => {
+      try{
+      const user = getUser(receiverId);
+      console.log("b ", user)
+      console.log(users)
+      io.to(user.socketId).emit("getMessage", {
+        senderId,
+        text,
+      });
+    }catch(error){
+      console.log("not online")
+    }
+    });
   
     socket.on("disconnect", () => {
       console.log("a user disconnected!");
