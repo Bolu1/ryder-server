@@ -74,6 +74,7 @@ class TripsService {
     return
   }
 
+
 }
 
 export default TripsService;

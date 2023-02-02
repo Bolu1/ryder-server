@@ -11,7 +11,8 @@ import {
 } from "../core/ApiError";
 import Jwt from "../core/Jwt";
 import KycService from "../services/kyc.services";
-const haversine = require('haversine-distance')
+import RideTypeService from "../services/rideType.services";
+const axios = require('axios')
 
 
 const adb = ndb.promise();
@@ -19,30 +20,50 @@ const adb = ndb.promise();
 class TripsService {
   public static async newTrip(req, user) {
     //payload to the database
+
+    const { data } = await axios.get(
+      `
+      https://maps.googleapis.com/maps/api/directions/json?origin=${req.body.startLatitude},${req.body.startLongitude}&destination=${req.body.endLatitude},${req.body.endLongitude}&key=AIzaSyAoDFdAd4A4kr7KF7JqBuH09EFd9DllZ58`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Cache-Control': "no-cache"
+        },
+      },
+    );
+
+    const rideType = await RideTypeService.getRidetypeBySlug(req.body.rideType)
+
+    if(!rideType){
+      throw new BadRequestError("Ride type does not exist")
+    }
+
+
+    const distance = data.routes[0].legs[0].distance.value
+    const duration = data.routes[0].legs[0].distance.value
+    const fare = distance * rideType.cost_per_kilometer
+
     const slug = generateString(4, true, false);
-    const a = { latitude: req.body.startLatitude, longitude: req.body.startLongitude }
-    const b = { latitude: req.body.endLatitude, longitude: req.body.endLongitude }
-    
-    const meter = haversine(a, b) 
-    console.log(meter * 0.001) 
 
+    const payload = {
+      user_id: user.id,
+      start_longitude: req.body.startLongitude,
+      end_longitude: req.body.endLongitude,
+      start_latitude: req.body.startLatitude,
+      end_latitude: req.body.endLatitude,
+      start_location: req.body.startLocation,
+      end_location: req.body.endLocation,
+      duration: duration,
+      distance: distance,
+      fare: fare,
+      ride_type: req.body.rideType,
+      payment_type: req.body.paymentType,
+      slug: slug,
+    };
 
-    // const payload = {
-    //   user_id: user.id,
-    //   start_longitude: req.body.startLongitude,
-    //   end_longitude: req.body.endLongitude,
-    //   start_latitude: req.body.startLatitude,
-    //   end_latitude: req.body.endLatitude,
-    //   start_location: req.body.startLocation,
-    //   end_location: req.body.endLocation,
-    //   duration: req.body.duration,
-    //   fare: req.body.fare,
-    //   slug: slug,
-    // };
-
-    // const sql = `INSERT INTO trips SET ?`;
-    // await adb.query(sql, payload);
-    // return slug
+    const sql = `INSERT INTO trips SET ?`;
+    await adb.query(sql, payload);
+    return slug
   }
 
   public static async driverAccept(req, user) {
