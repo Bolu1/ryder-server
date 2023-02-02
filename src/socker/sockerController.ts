@@ -69,7 +69,7 @@ const app = (server) => {
   };
 
   const updateDriverLocation = (driverId, driverLatitude, driverLongitude) => {
-    console.log(drivers)
+    console.log("old", drivers)
 
     drivers.some((driver) => {
       if (driver.driverId == driverId) {
@@ -77,7 +77,7 @@ const app = (server) => {
         driver.driverLongitude = driverLongitude;
       }
     });
-    console.log(drivers)
+    console.log("new", drivers)
   };
 
   const removeUser = (socketId) => {
@@ -112,9 +112,8 @@ const app = (server) => {
     socket.on(
       "updateDriverLocation",
       ({ driverId, driverLatitude, driverLongitude }) => {
-        console.log(driverId, driverLatitude, driverLongitude, socket.id);
+        console.log("old", driverId, driverLatitude, driverLongitude, socket.id);
         updateDriverLocation(driverId, driverLatitude, driverLongitude);
-        console.log("a ",drivers);
         // io.emit("gedrivers",drivers);
       }
     );
