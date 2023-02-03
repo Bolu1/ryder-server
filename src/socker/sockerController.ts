@@ -132,6 +132,44 @@ const app = (server) => {
       }
     });
 
+    socket.on("createTrip", (tripId)=>{
+      try{
+        
+        for(let i = 0; i < drivers.length; i++){
+          io.to(drivers[i].socketId).emit("createDriverRequest", {
+            status: true,
+            tripId: tripId
+          });
+        }
+      }catch(error){
+        console.log("not online")
+      }
+    })
+
+    socket.on("cancelTrip", (tripId)=>{
+      try{
+        
+          io.emit("cancelDriverRequest", {
+            status: false,
+            tripId: tripId
+          });
+      }catch(error){
+        console.log("not online")
+      }
+    })
+
+    socket.on("acceptTrip", (tripId)=>{
+      try{
+        
+          io.emit("cancelDriverRequest", {
+            status: false,
+            tripId: tripId
+          });
+      }catch(error){
+        console.log("not online")
+      }
+    })
+
     socket.on("disconnectUser", () => {
       console.log("a user disconnected!");
       removeUser(socket.id);
