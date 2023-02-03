@@ -69,7 +69,6 @@ const app = (server) => {
   };
 
   const updateDriverLocation = (driverId, driverLatitude, driverLongitude) => {
-    console.log("old", drivers)
 
     drivers.some((driver) => {
       if (driver.driverId == driverId) {
@@ -77,7 +76,6 @@ const app = (server) => {
         driver.driverLongitude = driverLongitude;
       }
     });
-    console.log("new", drivers)
   };
 
   const removeUser = (socketId) => {
@@ -93,9 +91,10 @@ const app = (server) => {
   };
 
   io.of("/trips").on("connection", (socket) => {
-    console.log("a user connected");
     io.emit("welcome", "hello the is is socket");
     socket.on("addUser", (userId) => {
+
+    console.log("a user connected");
       console.log(userId, socket.id);
       adduser(userId, socket.id);
       console.log("a ", users);
@@ -103,6 +102,8 @@ const app = (server) => {
     });
 
     socket.on("addDriver", ({ driverId, driverLatitude, driverLongitude }) => {
+
+    console.log("a driver connected");
       console.log(driverId, driverLatitude, driverLongitude, socket.id);
       addDriver(driverId, driverLatitude, driverLongitude, socket.id);
       console.log("a ",drivers);
@@ -112,7 +113,6 @@ const app = (server) => {
     socket.on(
       "updateDriverLocation",
       ({ driverId, driverLatitude, driverLongitude }) => {
-        console.log("old", driverId, driverLatitude, driverLongitude, socket.id);
         updateDriverLocation(driverId, driverLatitude, driverLongitude);
         // io.emit("gedrivers",drivers);
       }
@@ -136,11 +136,13 @@ const app = (server) => {
       try{
         console.log(drivers)
         for(let i = 0; i < drivers.length; i++){
-          console.log("xz", drivers[i])
+          console.log("xz", drivers[i].socketId)
           io.to(drivers[i].socketId).emit("createDriverRequest", {
             status: true,
             tripId: tripId
           });
+          io.emit("hello", "oom00o");
+
         }
       }catch(error){
         console.log("not online")
