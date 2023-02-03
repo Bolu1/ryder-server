@@ -48,3 +48,11 @@ exports.getOneTripHistory = asyncHandler(
     return new SuccessResponse("Success", result).send(res);
   }
 );
+
+exports.endTrip = asyncHandler(
+  async (req: Request, res: Response) => {
+
+    const result = await TripsService.endTrip(req, res.locals.user);
+    return new SuccessResponse("Success", result).send(res);
+  }
+);
