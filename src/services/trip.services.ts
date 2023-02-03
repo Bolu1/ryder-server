@@ -82,11 +82,36 @@ class TripsService {
     }
 
     if (trip.driver_id) {
-      throw new BadRequestError("Trip is already in progress");
+      throw new BadRequestError("Trip already accepted");
     }
 
     //payload to the database
     const slug = generateString(4, true, false);
+
+    const payload = {
+      driver_id: user.id,
+      drivers_longitude: req.body.driversLongitude,
+      drivers_latitude: req.body.driversLatitude,
+      status: "Accepted",
+    };
+
+    const sql = `UPDATE trips SET ? WHERE slug='${req.params.id}'`;
+    await adb.query(sql, payload);
+    return slug;
+  }
+
+
+  public static async startTrip(req, user) {
+    // check if trip has been accepted
+    const trip = await this.getTripBySlug(req.params.id);
+
+    if (!trip) {
+      throw new BadRequestError("Trip does not exist");
+    }
+
+    if (trip.status == "Completed") {
+      throw new BadRequestError("Trip is already in completed");
+    }
 
     var timestamp = Date.now();
     console.log(timestamp);
@@ -95,17 +120,13 @@ class TripsService {
     var d = new Date(timestamp);
 
     const payload = {
-      driver_id: user.id,
-      drivers_longitude: req.body.driversLongitude,
-      drivers_latitude: req.body.driversLatitude,
-      duration: req.body.duration,
       start_time: d,
-      status: "Active",
+      status: "Started",
     };
 
     const sql = `UPDATE trips SET ? WHERE slug='${req.params.id}'`;
     await adb.query(sql, payload);
-    return slug;
+    return;
   }
 
   public static async cancelTrip(req, user) {
@@ -148,7 +169,7 @@ class TripsService {
 
   public static async getOneTripHistory(req, user) {
     const sql = `
-    SELECT t.*, driver.first_name, driver.last_name, driver.photo, driver.slug, driver.phone
+    SELECT t.*, driver.first_name, driver.last_name, driver.photo, driver.phone, driver.trips_completed, driver.rating
       FROM trips t
       INNER JOIN drivers driver ON t.driver_id = driver.slug 
       WHERE t.slug = '${req.params.id}'
@@ -160,11 +181,16 @@ class TripsService {
     const carImages = await adb.query(
       `SELECT image_url FROM car_images WHERE driver_phone = '${tripAndDriver[0][0].phone}'`
     );
+    const userInfo = await adb.query(
+      `SELECT first_name, last_name, photo, phone FROM users WHERE slug = '${tripAndDriver[0][0].user_id}'`
+    );
+
 
     return {
       trip: tripAndDriver[0][0],
       carDetails: carDetails[0][0],
       carImages: carImages[0],
+      userInfo: userInfo[0][0]
     };
   }
 
@@ -225,6 +251,11 @@ class TripsService {
 
     const sql = `UPDATE trips SET ? WHERE slug='${req.params.id}' AND driver_id='${user.id}'`;
     await adb.query(sql, payload);
+
+    // update driver total amount of trips
+    await adb.query(`UPDATE drivers 
+    SET trips_completed = trips_completed + 1 
+    WHERE slug = '${user.id}'`)
 
     return charge;
   }

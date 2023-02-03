@@ -68,6 +68,8 @@ router.delete('/withdrawal/request/:id', isAuth, controller.deleteWithdrawalRequ
 router.get('/withdrawal/request', isAuth, controller.getWithdrawalRequest)
 
 router.patch('/paymentDetails', isAuth, controller.editPaymentDetails)
+router.patch('/rate', isAuth, controller.setRating)
+
 
 
 module.exports = router

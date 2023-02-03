@@ -186,3 +186,10 @@ exports.editPaymentDetails = asyncHandler(
     return new SuccessResponse("Success", []).send(res);
   }
 );
+
+exports.setRating = asyncHandler(
+  async (req: Request, res: Response) => {
+    await DriverService.setRating(req, res.locals.user);
+    return new SuccessResponse("Success", []).send(res);
+  }
+);

@@ -494,6 +494,24 @@ class DriverService {
     const sql = `UPDATE payment_details SET ? WHERE driver_phone = '${user.phone}'`;
     await adb.query(sql, payload);
   }
+
+  public static async setRating(req, user) {
+    
+    const userInfo = await adb.query(`SELECT * FROM drivers WHERE slug = '${user.id}'`)
+
+    console.log(req.body)
+    console.log(userInfo[0][0])
+    const top = userInfo[0][0].rating+req.body.rating
+    const div = userInfo[0][0].number_of_ratings+1
+    console.log(top, div)
+    const newRating = top/div
+    console.log(newRating)
+
+    const sql = `UPDATE drivers 
+    SET number_of_ratings = number_of_ratings + 1, rating = ${newRating}
+    WHERE slug = '${user.id}'`;
+    await adb.query(sql);
+  }
 }
 
 export default DriverService;

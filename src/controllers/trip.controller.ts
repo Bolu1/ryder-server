@@ -49,6 +49,14 @@ exports.getOneTripHistory = asyncHandler(
   }
 );
 
+exports.startTrip = asyncHandler(
+  async (req: Request, res: Response) => {
+
+    await TripsService.startTrip(req, res.locals.user);
+    return new SuccessResponse("Success", []).send(res);
+  }
+);
+
 exports.endTrip = asyncHandler(
   async (req: Request, res: Response) => {
 

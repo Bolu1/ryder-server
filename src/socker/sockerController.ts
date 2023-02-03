@@ -134,8 +134,9 @@ const app = (server) => {
 
     socket.on("createTrip", (tripId)=>{
       try{
-        
+        console.log(drivers)
         for(let i = 0; i < drivers.length; i++){
+          console.log("xz", drivers[i])
           io.to(drivers[i].socketId).emit("createDriverRequest", {
             status: true,
             tripId: tripId
@@ -161,7 +162,7 @@ const app = (server) => {
     socket.on("acceptTrip", (tripId)=>{
       try{
         
-          io.emit("cancelDriverRequest", {
+          io.emit("acceptDriverRequest", {
             status: false,
             tripId: tripId
           });
