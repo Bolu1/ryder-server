@@ -64,14 +64,44 @@ const app = (server) => {
   };
 
   const addDriver = (driverId, driverLatitude, driverLongitude, socketId) => {
-    !drivers.some((driver) => driver.driverId == driverId) &&
-      drivers.push({ driverId, driverLatitude, driverLongitude, socketId });
+
+    // drivers.map((driver, index) => {
+    //   if (driver.driverLatitude == driverId) {
+
+    //     driver.driverId = driverId
+    //     driver.driverLatitude = driverLatitude;
+    //     driver.driverLongitude = driverLongitude;
+    //     driver.socketId = socketId
+    //   }else{
+    //     if(index == drivers.length-1){
+    //       users.push({ driverId, socketId });
+    //     }
+    //   }
+    // })
+    if(drivers.length == 0){
+      drivers.push({ driverId, socketId });
+    }
+    for(let i = 0; i<drivers.length; i++){
+      console.log(drivers[i])
+      if (drivers[i].driverId == driverId) {
+
+        drivers[i].driverId = driverId
+        drivers[i].driverLatitude = driverLatitude;
+        drivers[i].driverLongitude = driverLongitude;
+        drivers[i].socketId = socketId
+      }else{
+        if(i == drivers.length-1){
+          drivers.push({ driverId, socketId });
+        }
+      }
+    }
   };
 
   const updateDriverLocation = (driverId, driverLatitude, driverLongitude) => {
 
     drivers.some((driver) => {
       if (driver.driverId == driverId) {
+
         driver.driverLatitude = driverLatitude;
         driver.driverLongitude = driverLongitude;
       }
