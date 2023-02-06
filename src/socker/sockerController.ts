@@ -27,12 +27,12 @@ const app = (server) => {
   //   // messages
   //   io.of("/messages").on("connection", (socket) => {
   //     console.log("a user connected");
-  //     io.emit("welcome", "hello the is is socket");
+  //     socket.emit("welcome", "hello the is is socket");
   //     socket.on("addUser", (userId) => {
   //       console.log(userId, socket.id)
   //       adduser(userId, socket.id);
   //       console.log("a ",users)
-  //       io.emit("getUsers", users);
+  //       socket.emit("getUsers", users);
   //     });
 
   //     socket.on("sendMessage", ({ senderId, receiverId, text }) => {
@@ -40,7 +40,7 @@ const app = (server) => {
   //       const user = getUser(receiverId);
   //       console.log("b ", user)
   //       console.log(users)
-  //       io.to(user.socketId).emit("getMessage", {
+  //       socket.to(user.socketId).emit("getMessage", {
   //         senderId,
   //         text,
   //       });
@@ -90,15 +90,15 @@ const app = (server) => {
     return users.find((user) => user.userId == userId);
   };
 
-  io.of("/trips").on("connection", (socket) => {
-    io.emit("welcome", "hello the is is socket");
+  io.on("connection", (socket) => {
+    socket.emit("welcome", "Hello there ");
     socket.on("addUser", (userId) => {
 
     console.log("a user connected");
       console.log(userId, socket.id);
       adduser(userId, socket.id);
       console.log("a ", users);
-      io.emit("getUsers", users);
+      socket.emit("getUsers", users);
     });
 
     socket.on("addDriver", ({ driverId, driverLatitude, driverLongitude }) => {
@@ -107,14 +107,13 @@ const app = (server) => {
       console.log(driverId, driverLatitude, driverLongitude, socket.id);
       addDriver(driverId, driverLatitude, driverLongitude, socket.id);
       console.log("a ",drivers);
-      // io.emit("gedrivers",drivers);
     });
 
     socket.on(
       "updateDriverLocation",
       ({ driverId, driverLatitude, driverLongitude }) => {
         updateDriverLocation(driverId, driverLatitude, driverLongitude);
-        // io.emit("gedrivers",drivers);
+        // socket.emit("gedrivers",drivers);
       }
     );
 
@@ -123,7 +122,7 @@ const app = (server) => {
         const user = getUser(receiverId);
         console.log("b ", user);
         console.log(users);
-        io.to(user.socketId).emit("getMessage", {
+        socket.to(user.socketId).emit("getMessage", {
           senderId,
           text,
         });
@@ -132,7 +131,7 @@ const app = (server) => {
       }
     });
 
-    socket.on("createTrip", (tripId)=>{
+    socket.on("createTrip", ({tripId})=>{
       try{
         console.log(drivers)
         for(let i = 0; i < drivers.length; i++){
@@ -141,7 +140,6 @@ const app = (server) => {
             status: true,
             tripId: tripId
           });
-          io.emit("hello", "oom00o");
 
         }
       }catch(error){
@@ -149,10 +147,10 @@ const app = (server) => {
       }
     })
 
-    socket.on("cancelTrip", (tripId)=>{
+    socket.on("cancelTrip", ({tripId})=>{
       try{
         
-          io.emit("cancelDriverRequest", {
+          socket.emit("cancelDriverRequest", {
             status: false,
             tripId: tripId
           });
@@ -161,10 +159,10 @@ const app = (server) => {
       }
     })
 
-    socket.on("acceptTrip", (tripId)=>{
+    socket.on("acceptTrip", ({tripId})=>{
       try{
         
-          io.emit("acceptDriverRequest", {
+          socket.emit("acceptDriverRequest", {
             status: false,
             tripId: tripId
           });
