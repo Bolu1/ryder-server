@@ -201,6 +201,30 @@ const app = (server) => {
       }
     })
 
+    socket.on("startTrip", ({tripId})=>{
+      try{
+        
+          socket.emit("startTripEvent", {
+            status: true,
+            tripId: tripId
+          });
+      }catch(error){
+        console.log("not online")
+      }
+    })
+
+    socket.on("endTrip", ({tripId})=>{
+      try{
+        
+          socket.emit("endTripEvent", {
+            status: false,
+            tripId: tripId
+          });
+      }catch(error){
+        console.log("not online")
+      }
+    })
+
     socket.on("disconnectUser", () => {
       console.log("a user disconnected!");
       removeUser(socket.id);
