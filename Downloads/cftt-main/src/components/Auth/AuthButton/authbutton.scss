@@ -1,0 +1,14 @@
+.auth-button{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 15px 10px;
+    border-radius: 50px;
+};
+.facebook-sign-in-button{
+    background: #0654DF;
+};
+.google-sign-in-button{
+    background: #F3B711;
+};

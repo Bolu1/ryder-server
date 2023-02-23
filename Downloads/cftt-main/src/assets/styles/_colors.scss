@@ -1,0 +1,39 @@
+// Colour names are gotten from the syle guide of the Design Mockup
+$palette: (
+    White: #ffffff,
+    Black: #000000,
+    Ebony: #111827,
+    EbonyClay: #1f2937,
+    OxfordBlue: #374151,
+    Mercury: #e5e5e5,
+    PaleSky: #6b7280,
+    Stratos: #00004d,
+    RegentGray: #959da5,
+    PortGore: #212159,
+    AlizarinCrimson: #db2b39,
+    AthensGray: #e1e4e8,
+    RiverBed: #4b5563,
+    MountainMeadow: #373a39,
+    Scandal: #dafbf0,
+    Shark: #24292e,
+    TitanWhite: #f4f4ff,
+    SunShade: #feaa2b,
+    LinkWater: #e3ebf6,
+    WhiteLilac: #f7f9fc,
+    AthensGrayLighter: #fcfcfd,
+    Gigas: #3e3e97,
+    Mischka: #D1D5DB,
+    MoodyBlue: #6868D4,
+    PrimaryRed: #d82323,
+    PattensBlue: #DBEAFE,
+    PersianBlue: #1E40AF
+);
+
+// A mixin to darken colors on hover
+@mixin hoverHandler($color) {
+    color: $color;
+
+    &:hover {
+        color: darken($color, 5%);
+    }
+}

@@ -1,0 +1,29 @@
+.user-profile-img{
+    width: 64px;
+    height: 64px;
+    border-radius: 10px;
+}
+.user-card{
+    border: none !important;
+    box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.08);
+    border-radius: 4px;
+}
+.user-details{
+    margin-left: 20px !important;
+}
+.name{
+    font-weight: 600;
+    font-size: 13px;
+    line-height: 16px;
+    letter-spacing: 0.05em;
+    color: #000000;
+}
+.user-name{
+    line-height: 14px;
+    letter-spacing: 0.05em;
+    font-size: 11px !important;
+    color: rgba(0, 0, 0, 0.55);
+}
+.mr-3{
+    margin-right: 10px !important;
+}

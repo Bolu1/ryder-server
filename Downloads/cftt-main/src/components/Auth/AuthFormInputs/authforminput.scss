@@ -1,0 +1,63 @@
+.auth-form-group{
+
+    .input-container {
+        padding-bottom: 0.2em !important;
+    }
+
+    .right-inner-addon {
+        position: relative;
+    }
+    .right-inner-addon input {
+        padding-right: 35px !important;
+    }
+    .right-inner-addon img {
+        position: absolute;
+        right: 0px;
+        padding: 18px 12px;
+        pointer-events: none;
+    }
+
+    .right-inner-addon-b {
+        position: relative;
+    }
+    .right-inner-addon-b input {
+        padding-right: 35px !important;
+    }
+    .right-inner-addon-b img {
+        position: absolute;
+        right: 0px;
+        padding: 9px 12px;
+        pointer-events: none;
+    }
+    // Password Icon
+    .right-inner-addon-b .icon-tabler {
+        position: absolute;
+        right: 0px;
+        padding: 9px 12px;
+        pointer-events: none;
+        z-index: 5000;
+    }
+    // Passowrd Icon
+    .right-inner-addon .icon-tabler {
+        position: absolute;
+        right: 0px;
+        padding: 18px 12px;
+        pointer-events: none;
+        z-index: 5000;
+    }
+
+    input {
+        width: 100%;
+        padding: 1em !important;
+        // padding-bottom:  0px !important;
+        margin: 0em !important;
+        box-sizing: border-box;
+        background: #FAFAFA;
+        outline: none !important;
+        // box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.15);
+        border-radius: 25px !important; 
+    }
+    .text-left{ 
+        // text-align: left !important;
+    }
+}

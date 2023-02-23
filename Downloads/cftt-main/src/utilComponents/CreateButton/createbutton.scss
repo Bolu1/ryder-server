@@ -1,0 +1,25 @@
+.create-button{
+	position:fixed;
+	bottom:40px;
+	right:40px;
+	color:#FFF;
+	text-align:center;
+    border: none;
+    background: #0654DF;
+    border-radius: 50px;
+    align-items: center;
+    padding: 10px 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+    transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+}
+.non-float-create-button{
+	color:#FFF;
+	text-align:center;
+    border: none;
+    background: #0654DF;
+    border-radius: 50px;
+    align-items: center;
+    padding: 10px 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+    transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+}

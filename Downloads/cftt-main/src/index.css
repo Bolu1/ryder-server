@@ -1,0 +1,91 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
+.select_container {
+  width: 100%;
+  height: 60px;
+  display: flex;
+  justify-content: end;
+  align-items: center;
+  margin-top: 40px;
+}
+.select_flag {
+  /* width: 60px; */
+}
+.pointer {
+  cursor: pointer;
+}
+.w-90 {
+  width: 90% !important;
+}
+.red-bg {
+  color: #ffffff;
+  background-color: #c8372d;
+}
+.light-purple-bg {
+  color: #ffffff;
+  background-color: #bac5ff;
+}
+.green-bg {
+  color: #ffffff;
+  background-color: #37833b;
+}
+.orange-bg {
+  color: #ffffff;
+  background-color: #d1941a;
+}
+.grey-bg {
+  color: #000000;
+  background-color: #c4c4c4;
+}
+.blue-bg {
+  color: #ffffff;
+  background-color: #2264d1;
+}
+.radius-99 {
+  border-radius: 99px;
+}
+.rdp-day_selected:not([disabled]),
+.rdp-day_selected:focus:not([disabled]),
+.rdp-day_selected:active:not([disabled]),
+.rdp-day_selected:hover:not([disabled]) {
+  color: white;
+  background-color: #2264d1 !important;
+}
+.rdp {
+  padding: 10px;
+  background-color: white;
+  margin: 0px;
+}
+.info-label {
+  font-style: normal;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 19px;
+  color: #000000;
+  opacity: 0.5;
+  margin-bottom: 8px;
+}
+.info-text {
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 19px;
+  color: #000000;
+}
+.filter-btn {
+  background-color: #001167;
+  color: white;
+  border: none;
+  border-radius: 6px;
+}

@@ -1,0 +1,52 @@
+.appointments{
+    $primary: #007bff;
+    $success: #28a745;
+    $warning: #ffc107;
+    $danger: #dc3545;
+
+    .table{
+        border-spacing: 0 15px;
+        border-collapse: separate;
+        thead{
+            span{
+                // font-style: normal;
+                // font-weight: 400;
+                font-size: 14px;
+                line-height: 21px;
+                color: #666B87;
+            }
+        }
+        thead, tbody{
+            tr{
+                th, td{
+                    vertical-align: middle;
+                    border:none;
+                    &:nth-last-child(1){
+                        text-align: center;
+                    }
+                }
+            }
+        }
+        tbody{
+            tr{
+                box-shadow: 0 0 0 1px #E5E7EB;
+                td{
+                    background:#fff;
+                    padding-top: 18px !important;
+                    padding-bottom: 18px !important;
+                    font-style: normal;
+                    font-weight: 400;
+                    font-size: 14px;
+                    line-height: 21px;
+                    color: #374151;
+                    &:nth-child(1){
+                        border-radius: 5px 0 0 5px;
+                    }
+                    &:nth-last-child(1){
+                        border-radius: 0 5px 5px 0;
+                    }
+                }
+            }
+        }
+    }
+}

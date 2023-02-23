@@ -1,0 +1,58 @@
+.modal {
+ 
+    .modal-vw-90{
+        min-width: 90vw;
+    }
+    .modal-content {
+        .modal-header {
+            background: #f7f9fc;
+            border-bottom: 0px solid;
+
+            .modal-title {
+                color: #00004d;
+                font-size: 20px;
+                font-weight: 500;
+                line-height: 28px;
+            }
+
+            .close {
+                color: #00004d !important;
+                background: #f7f9fc;
+                font-weight: normal;
+                opacity: unset;
+                text-shadow: unset;
+                border: none;
+                font-size: 25px;
+            }
+        }
+
+        .modal-body-content {
+            label {
+                color: #111827;
+                font-size: 14px;
+                font-weight: 500px;
+            }
+
+            .form-control {
+                background: white;
+                border: 1px solid #e3ebf6;
+                border-radius: 10px;
+                box-shadow: inset 0px 2px 0px rgba(225, 228, 232, 0.2);
+                box-sizing: border-box;
+               // height: 45px;
+            }
+        }
+
+        .modal-footer {
+            background: #f7f9fc;
+            border-top: 0px solid;
+        }
+    }
+};
+.pac-container {
+    background-color: #FFF;
+    z-index: 2000;
+    position: fixed;
+    display: inline-block;
+    float: left;
+}

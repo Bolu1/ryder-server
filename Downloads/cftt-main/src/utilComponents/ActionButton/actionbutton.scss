@@ -1,0 +1,33 @@
+.action-button{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 5px 10px;
+    width: 98px;
+    border-radius: 50px;
+
+    font-family: Open Sans;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 12px;
+    line-height: 16px;
+    text-align: center;
+    color: #FAFAFA;
+    border: none !important;
+    transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+    max-height: 28px;
+}
+.edit-action{
+    background: #0654DF;
+}
+.delete-action{
+    background: #FAFAFA !important;
+    border: 2px solid #0654DF !important; 
+    color: #0654DF;
+}
+.reject-action{
+    background: #FAFAFA;
+    border: 2px solid #d63c3c !important; 
+    color: #F03738;
+}

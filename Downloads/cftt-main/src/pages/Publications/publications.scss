@@ -1,0 +1,146 @@
+.tabs{
+
+}
+.font-weight-bold{
+    font-weight: bolder;
+}
+.tab-count{
+    margin-left: 10px;
+    width: 30px !important;
+    height: 30px;
+    padding: 5px;
+    border-radius: 50%;
+    border: 0.5px solid rgba(0, 0, 0, 0.7);
+    box-sizing: border-box;
+    font-size: 14px;
+}
+.tab-title{
+    padding-bottom: 7px;
+    font-size: 16px;
+    // border-bottom: 2px solid #c7c6c6 !important;
+}
+.tab{
+    // border-bottom: 2px solid #c7c6c6 !important;
+}
+.active-tab-title{
+    font-weight: 500;
+    font-size: 15.6px;
+    line-height: 23px;
+    border-bottom: 2px solid #000000 !important;
+    color: #000000;
+}
+.pr-3{
+    padding-right: 1rem !important;
+}
+.attachment-div{
+    border: 1px solid #C4C4C4;
+    box-sizing: border-box;
+    border-radius: 12px;
+    min-width: 224px;
+}
+
+// Apostle desk
+.svg-container svg {
+    // fill: #ff0000;
+  }
+.banner-container{
+    height: 100px;
+    width: 100%;
+    
+}
+.banner-container img{
+   object-fit: cover;
+   height: 100% !important;
+    
+}
+.apostle-desk-header{
+    font-weight: 600;
+    font-size: 12px;
+    line-height: 24px;
+    color: rgba(0, 0, 0, 0.4);
+}
+.apostle-desk-active-nav{
+    background: #0654DF;
+    border-radius: 100px;
+    font-weight: 600;
+    font-size: 12px;
+    line-height: 24px;
+    border: none;
+    width: 196px;
+}
+.apostle-desk-nav{
+    text-align: center;
+    color: rgba(0, 0, 0, 0.3);
+    background: rgba(0, 0, 0, 0.04);
+    border-radius: 100px;
+    font-weight: 600;
+    font-size: 12px;
+    line-height: 24px;
+    width: 196px;
+    border: none;
+}
+.gap-30{
+    gap:30px;
+}
+.apostle-desk-post-header{
+    font-style: normal;
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 22px;
+}
+.apostle-desk-post-body{
+    font-style: normal;
+    font-weight: 300;
+    font-size: 12px;
+    line-height: 16px;
+    text-align: justify;
+    color: rgba(0, 0, 0, 0.7);
+}
+.published-time-posted{
+    font-family: Open Sans;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 10px;
+    line-height: 14px;
+    color: rgba(0, 0, 0, 0.5);
+}
+
+// Daliy prayer box
+.daily-prayer-box-container{
+    display: flex;
+    gap: 30px;
+
+    .daily-prayer-box{
+        width: 40px;
+        height: 40px;
+        border-radius: 5px;
+        background-color:  rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        text-align: center;
+        color: #C4C4C4;
+        div{
+            width: 100%;
+        }
+    }
+    .active{
+       border: 1px solid rgba(0, 0, 0, 0.5);
+       background-color: white;
+       color: rgba(0, 0, 0, 0.5);
+    }
+}
+
+
+// Bible study
+.bible-study{
+
+    .gap-20{
+        gap: 20px;
+    }
+    ._gap-4{
+        gap: 5px;
+    }
+}
+.MuiFormControl-root{
+    margin-top: 0px !important;
+}

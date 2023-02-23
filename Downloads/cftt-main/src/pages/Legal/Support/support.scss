@@ -1,0 +1,151 @@
+.support-container{
+    .support-body{
+        margin-left: 20%;
+        margin-right: 20%;
+        .support-cards{
+            gap:40px;
+            display: flex;
+            margin-top: 60px;
+            .support-card{
+                width:  358px;
+                background: rgba(255, 255, 255, 0.12);
+                border: 2px solid #F5F5F5;
+                border-radius: 8px;
+                padding: 29px;
+                display: flex;
+                justify-content: center;
+                h6{
+                    font-family: 'Montserrat';
+                    font-style: normal;
+                    font-weight: 600;
+                    font-size: 14px;
+                    line-height: 21px;
+                    /* identical to box height, or 150% */
+
+                    text-align: center;
+
+                    color: #000000;
+                }
+            }
+        }
+        .asked-questions{
+            margin-top: 60px;
+            .header{
+                font-family: 'Montserrat';
+                font-style: normal;
+                font-weight: 600;
+                font-size: 16px;
+                line-height: 21px;
+                color: #000000;
+                margin-bottom: 30px;
+            }
+        }
+        .request-box{
+            margin-top: 82px;
+            .box{
+                padding: 30px;
+                background: #FAFAFA;
+                border-radius: 8px;
+                .header{
+                    font-family: 'Montserrat';
+                    font-style: normal;
+                    font-weight: 600;
+                    font-size: 14px;
+                    line-height: 21px;
+                    margin-bottom: 27px;
+                    color: #1C2A3A;
+                }
+                button{
+                    border: 2px solid #1C2A3A;
+                    border-radius: 8px;
+                    font-family: 'Open Sans';
+                    font-style: normal;
+                    font-weight: 600;
+                    font-size: 14px;
+                    line-height: 16px;
+                    color: #1C2A3A;
+                    padding: 10px;
+                }
+            }
+        }
+    }
+    /* Responsiveness */
+    @media (max-width: 700px){
+        h4{
+            text-align: center;
+            margin-bottom: 20px !important;
+        }
+        .support-body{
+            margin-left: 0%;
+            margin-right: 0%;
+            
+            .support-cards{
+                gap:40px;
+                display: flex;
+                flex-direction: column;
+                margin-top: 60px;
+                .support-card{
+                    width: 100%;
+                    background: rgba(255, 255, 255, 0.12);
+                    border: 2px solid #F5F5F5;
+                    border-radius: 8px;
+                    padding: 29px;
+                    display: flex;
+                    justify-content: center;
+                    h6{
+                        font-family: 'Montserrat';
+                        font-style: normal;
+                        font-weight: 600;
+                        font-size: 14px;
+                        line-height: 21px;
+                        /* identical to box height, or 150% */
+    
+                        text-align: center;
+    
+                        color: #000000;
+                    }
+                }
+            }
+            .asked-questions{
+                margin-top: 60px;
+                .header{
+                    font-family: 'Montserrat';
+                    font-style: normal;
+                    font-weight: 600;
+                    font-size: 16px;
+                    line-height: 21px;
+                    color: #000000;
+                    margin-bottom: 30px;
+                }
+            }
+            .request-box{
+                margin-top: 82px;
+                .box{
+                    padding: 30px;
+                    background: #FAFAFA;
+                    border-radius: 8px;
+                    .header{
+                        font-family: 'Montserrat';
+                        font-style: normal;
+                        font-weight: 600;
+                        font-size: 14px;
+                        line-height: 21px;
+                        margin-bottom: 27px;
+                        color: #1C2A3A;
+                    }
+                    button{
+                        border: 2px solid #1C2A3A;
+                        border-radius: 8px;
+                        font-family: 'Open Sans';
+                        font-style: normal;
+                        font-weight: 600;
+                        font-size: 14px;
+                        line-height: 16px;
+                        color: #1C2A3A;
+                        padding: 10px;
+                    }
+                }
+            }
+        }
+    }
+}

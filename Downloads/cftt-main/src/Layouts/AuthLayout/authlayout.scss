@@ -1,0 +1,26 @@
+.auth-container{
+    .auth-children{
+        padding-left: 15%;
+        padding-right: 15%;
+    }
+    .m-h-100{
+        min-height: 100vh;
+    }
+    
+    .auth-img{
+        background: #0654DF;
+    } 
+}
+@media (max-width: 900px) {
+    .auth-container{
+        min-height: 100vh;
+        justify-content: center;
+        .left{
+            display: none;
+        }
+        .auth-children{
+            padding-left: 3%;
+            padding-right: 3%;
+        }
+    }
+}

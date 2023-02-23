@@ -1,0 +1,35 @@
+.form-group {
+    position: relative !important;
+    
+    input {
+        position: relative !important;
+        outline: none !important;
+        background: #FFFFFF;
+        border: 1px solid rgba(196, 196, 196, 0.83);
+        box-sizing: border-box;
+        border-radius: 12px;
+        height: 50px;
+
+        font-family: 'Open Sans';
+        font-style: normal;
+        font-weight: 400;
+        font-size: 14px;
+        line-height: 19px;
+        letter-spacing: 0.05em;
+        color: rgba(0, 0, 0, 0.8);
+        // margin-bottom: 27px;
+    }
+    input:focus{
+        outline: none !important;
+    }
+    label{
+        font-style: normal;
+        font-weight: 600;
+        font-size: 14px;
+        line-height: 19px;
+        display: flex;
+        align-items: center;
+        color: #50555C;
+        margin-bottom: 12px;
+    }
+}

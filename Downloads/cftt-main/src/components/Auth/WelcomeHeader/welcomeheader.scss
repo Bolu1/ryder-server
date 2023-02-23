@@ -1,0 +1,22 @@
+.welcome-header{
+    // font-family: Open Sans;
+    font-size: 32px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 44px;
+    letter-spacing: 0.05em;
+    text-align: center;
+};
+.secondary-text{
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 27px;
+    letter-spacing: 0.05em;
+    text-align: center;
+};
+@media (max-width: 900px) {
+    .welcome-header{
+        font-size: 26px;
+    };
+}
